@@ -1,0 +1,198 @@
+{
+  "main": {
+    "id": "96386d99dc2a2410",
+    "type": "split",
+    "children": [
+      {
+        "id": "a662e9f8fb9e7884",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "bbbb68239db91cce",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "f157f5e4a584aaae",
+    "type": "split",
+    "children": [
+      {
+        "id": "77a7159389e5502d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "7b6665aa124ce9f3",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": true
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "32124acb1ee0a1bf",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "ed363d1c280fa078",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "02116dd560249892",
+    "type": "split",
+    "children": [
+      {
+        "id": "4895da3eb9b573fb",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1e474c08ec34642d",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": true,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "96bf98dcb26a7a8e",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "7e0488d9fbf6332c",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "f461c93f3096e5b9",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "7eb6ed8fa6756c17",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "bbbb68239db91cce",
+  "lastOpenFiles": [
+    "hammer-data/HAMMER_AI_IN_ACTION_THIS_5_Minute_Video_Will_Change_Your_Car_Dealership_FOREVER.md",
+    "hammer-data/Hammer_Sales_Pitch_Call_Deal_Closed_Redacted.md",
+    "hammer-data/Hammer+Overview.pdf.md",
+    "hammer-data/AIA Guide (4).pdf.md",
+    "hammer-data/scripts/pdf_to_md.py",
+    "hammer-data/scripts",
+    "hammer-data/Hammer Website/MarketPoster_Hammer.pdf.md",
+    "hammer-data/Hammer Website/Hammer_Connect_Hammer.pdf.md",
+    "hammer-data/Hammer Website/Hammer_AI_lead_follow-up_for_dealerships.pdf.md",
+    "hammer-data/Hammer Website/Hammer_AI_lead_follow-up_for_dealerships.pdf_1.md",
+    "hammer-data/Hammer Website/Facebook_AIA_Hammer.pdf.md",
+    "hammer-data/Hammer Website",
+    "hammer-data/MarketPoster_Chrome_extension_video_demo_transcript.md",
+    "hammer-data/Hammer_Demo.pdf.md",
+    "hammer-data/Hammer_AI_Revolutionizing_Dealership_Lead_Conversion_and_Follow-up.md",
+    "hammer-data/Hammer_AI_-_Lead_Response_for_Car_Dealerships.md",
+    "hammer-data/Hammer_A.I._Closing_a_$100k_Deal!_-_FRIKINtech_Walks_You_Through_The_Conversation.md"
+  ]
+}

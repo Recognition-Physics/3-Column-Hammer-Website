@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Loading…</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Figtree:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #070a10;
+      --mist: rgba(245, 248, 255, 0.06);
+      --glass-top: rgba(255, 255, 255, 0.14);
+      --glass-edge: rgba(255, 255, 255, 0.22);
+      --glass-inner: rgba(255, 255, 255, 0.08);
+      --text: #eef2fb;
+      --muted: rgba(200, 210, 230, 0.72);
+      --accent: #e63b3b;
+      --accent-soft: rgba(230, 59, 59, 0.35);
+      --accent-deep: #9f1f1f;
+      --ok: #3dd68c;
+      --ok-soft: rgba(61, 214, 140, 0.35);
+      --danger: #ff7b7b;
+      --blur: 28px;
+      --radius-lg: 22px;
+      --radius-md: 14px;
+      --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+      --font-body: "Figtree", ui-sans-serif, system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font-body);
+      font-weight: 450;
+      color: var(--text);
+      line-height: 1.55;
+      background: var(--ink);
+      overflow-x: hidden;
+    }
+
+    /* Ambient liquid field */
+    .aurora {
+      position: fixed;
+      inset: -20%;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 45% at 18% 22%, rgba(80, 140, 255, 0.45), transparent 55%),
+        radial-gradient(ellipse 50% 40% at 82% 18%, rgba(230, 59, 59, 0.22), transparent 50%),
+        radial-gradient(ellipse 60% 50% at 70% 88%, rgba(120, 90, 255, 0.18), transparent 55%),
+        radial-gradient(ellipse 45% 35% at 12% 75%, rgba(40, 200, 180, 0.12), transparent 50%),
+        linear-gradient(165deg, #050810 0%, #0a1020 40%, #070912 100%);
+      filter: saturate(115%);
+    }
+
+    .aurora::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.35;
+      mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+    }
+
+    .liquid-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.55;
+      z-index: 0;
+      pointer-events: none;
+      animation: drift 22s ease-in-out infinite alternate;
+    }
+    .liquid-orb.a {
+      width: min(52vw, 420px);
+      height: min(52vw, 420px);
+      top: -8%;
+      left: -6%;
+      background: radial-gradient(circle at 40% 40%, rgba(120, 180, 255, 0.55), transparent 70%);
+    }
+    .liquid-orb.b {
+      width: min(48vw, 380px);
+      height: min(48vw, 380px);
+      bottom: -12%;
+      right: -8%;
+      background: radial-gradient(circle at 55% 45%, rgba(230, 90, 120, 0.35), transparent 72%);
+      animation-delay: -8s;
+      animation-duration: 26s;
+    }
+
+    @keyframes drift {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(2.5%, 3%) scale(1.06); }
+    }
+
+    @keyframes rise-in {
+      from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.985);
+        filter: blur(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 44rem;
+      margin: 0 auto;
+      padding: clamp(1.5rem, 4vw, 2.75rem) clamp(1rem, 3vw, 1.5rem) 3.5rem;
+    }
+
+    .hero-glass {
+      margin-bottom: 1.75rem;
+      padding: clamp(1.25rem, 3vw, 1.75rem) clamp(1.25rem, 3vw, 1.65rem);
+      border-radius: var(--radius-lg);
+      background: linear-gradient(145deg, var(--glass-top), var(--mist));
+      border: 1px solid var(--glass-edge);
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.28),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.18);
+      backdrop-filter: blur(var(--blur)) saturate(165%);
+      -webkit-backdrop-filter: blur(var(--blur)) saturate(165%);
+      animation: rise-in 0.85s ease forwards;
+    }
+
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      .hero-glass, .card, .btn-glass {
+        background: rgba(18, 24, 38, 0.92);
+      }
+    }
+
+    .hero-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.45rem, 4vw, 1.85rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin: 0.35rem 0 0.4rem;
+      line-height: 1.15;
+      background: linear-gradient(105deg, #fff 0%, rgba(220, 230, 255, 0.88) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin: 0;
+      max-width: 38rem;
+    }
+    .sub strong { color: rgba(240, 245, 255, 0.92); font-weight: 600; }
+
+    .card {
+      position: relative;
+      border-radius: var(--radius-lg);
+      padding: 1.15rem 1.2rem 1.2rem;
+      margin-bottom: 1.05rem;
+      background: linear-gradient(155deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow:
+        0 18px 48px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(var(--blur)) saturate(155%);
+      -webkit-backdrop-filter: blur(var(--blur)) saturate(155%);
+      overflow: hidden;
+      animation: rise-in 0.75s ease forwards;
+      animation-fill-mode: both;
+    }
+    .card:nth-of-type(1) { animation-delay: 0.08s; }
+    .card:nth-of-type(2) { animation-delay: 0.16s; }
+    .card:nth-of-type(3) { animation-delay: 0.24s; }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.35), transparent 40%, transparent 60%, rgba(255,255,255,0.08));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .card-accent {
+      position: absolute;
+      left: 0;
+      top: 12%;
+      bottom: 12%;
+      width: 3px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--accent), rgba(255, 120, 120, 0.4));
+      box-shadow: 0 0 24px var(--accent-soft);
+    }
+
+    .card-inner { position: relative; padding-left: 0.85rem; }
+
+    h2 {
+      font-family: var(--font-display);
+      font-size: 1.02rem;
+      font-weight: 600;
+      margin: 0 0 0.55rem;
+      letter-spacing: -0.02em;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      align-items: center;
+    }
+
+    button {
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      border-radius: 999px;
+      padding: 0.72rem 1.2rem;
+      color: #fff;
+      position: relative;
+      isolation: isolate;
+      transition: transform 0.2s ease, box-shadow 0.25s ease;
+    }
+    button::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(180deg, rgba(255,255,255,0.22), transparent 45%);
+      opacity: 0.9;
+      z-index: -1;
+      pointer-events: none;
+    }
+    button:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.65);
+      outline-offset: 3px;
+    }
+    button:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+      transform: none;
+    }
+    button:not(:disabled):hover {
+      transform: translateY(-1px);
+    }
+    button:not(:disabled):active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    button.ptt {
+      min-width: 11.5rem;
+      background: linear-gradient(135deg, #ff5a5a 0%, var(--accent-deep) 100%);
+      box-shadow:
+        0 12px 32px rgba(180, 30, 30, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+    button.ptt.active {
+      background: linear-gradient(135deg, #5ef0a8 0%, #1f9f6a 100%);
+      box-shadow:
+        0 12px 36px rgba(20, 120, 80, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+
+    button.secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+    button.secondary::after {
+      background: linear-gradient(180deg, rgba(255,255,255,0.12), transparent 50%);
+    }
+    button.secondary:not(:disabled):hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.32);
+    }
+
+    .glass-field {
+      width: 100%;
+      min-height: 4.75rem;
+      resize: vertical;
+      font: inherit;
+      padding: 0.75rem 0.85rem;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(5, 8, 16, 0.35);
+      color: var(--text);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .glass-field::placeholder { color: rgba(180, 195, 220, 0.45); }
+    .glass-field:focus {
+      outline: none;
+      border-color: rgba(255, 120, 120, 0.55);
+      box-shadow:
+        0 0 0 1px var(--accent-soft),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .status {
+      font-size: 0.84rem;
+      color: var(--muted);
+      min-height: 1.35rem;
+      margin-top: 0.55rem;
+    }
+    .status.err { color: var(--danger); }
+
+    .reply {
+      white-space: pre-wrap;
+      font-size: 0.95rem;
+      color: rgba(240, 245, 255, 0.94);
+    }
+
+    .sources {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .sources summary {
+      cursor: pointer;
+      margin-top: 0.65rem;
+      list-style: none;
+    }
+    .sources summary::-webkit-details-marker { display: none; }
+    .sources summary::before {
+      content: "";
+      display: inline-block;
+      width: 0.45rem;
+      height: 0.45rem;
+      margin-right: 0.45rem;
+      border-radius: 2px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.5), rgba(255,255,255,0.1));
+      vertical-align: middle;
+      transform: rotate(-45deg);
+      transition: transform 0.2s ease;
+    }
+    .sources[open] summary::before { transform: rotate(0deg); }
+
+    label.field-label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 500;
+    }
+
+    .toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.65rem 0.45rem 0.5rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      font-size: 0.86rem;
+      color: rgba(220, 228, 245, 0.88);
+      cursor: pointer;
+      user-select: none;
+    }
+    .toggle input {
+      width: 1rem;
+      height: 1rem;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .card .sub { margin-bottom: 0.75rem; }
+  </style>
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"></div>
+  <div class="liquid-orb a" aria-hidden="true"></div>
+  <div class="liquid-orb b" aria-hidden="true"></div>
+
+  <main>
+    <header class="hero-glass">
+      <div class="hero-top">
+        <span class="badge" id="wiki-badge">…</span>
+      </div>
+      <h1 id="wiki-heading">…</h1>
+      <p class="sub" id="wiki-intro">…</p>
+      <p class="sub" id="wiki-browser-note" hidden></p>
+    </header>
+
+    <div class="card">
+      <div class="card-accent" aria-hidden="true"></div>
+      <div class="card-inner">
+        <p class="sub" style="margin-top:0" id="wiki-ptt-intro">…</p>
+        <div class="row">
+          <button type="button" class="ptt" id="ptt" disabled>…</button>
+          <label class="toggle row" style="gap:0.5rem;margin:0">
+            <input type="checkbox" id="speak" checked />
+            <span id="wiki-speak-toggle">…</span>
+          </label>
+        </div>
+        <p class="status" id="speechStatus"></p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-accent" aria-hidden="true"></div>
+      <div class="card-inner">
+        <label class="field-label" for="manual" id="wiki-manual-label">…</label>
+        <textarea id="manual" class="glass-field" placeholder="…"></textarea>
+        <div class="row" style="margin-top:0.65rem">
+          <button type="button" class="secondary" id="sendManual">…</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-accent" aria-hidden="true"></div>
+      <div class="card-inner">
+        <h2 id="wiki-reply-heading">…</h2>
+        <div class="reply" id="reply">—</div>
+        <div class="row" style="margin-top:0.65rem">
+          <button type="button" class="secondary" id="playReplyBtn" disabled title="…">…</button>
+        </div>
+        <details class="sources" id="sourcesWrap" hidden>
+          <summary id="wiki-chunks-label">…</summary>
+          <pre id="sources" style="white-space:pre-wrap;word-break:break-word"></pre>
+        </details>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let siteCopy = {};
+    function copy(key, fallback) {
+      return siteCopy[key] || fallback;
+    }
+    function copyTpl(key, fallback, vars) {
+      let s = copy(key, fallback);
+      Object.entries(vars || {}).forEach(([k, v]) => {
+        s = s.split('{{' + k + '}}').join(String(v));
+      });
+      return s;
+    }
+
+    async function applyWikiSiteCopy() {
+      try {
+        const res = await fetch('/api/site_copy');
+        if (!res.ok) return;
+        const c = await res.json();
+        siteCopy = c;
+        const setText = (id, key) => {
+          const el = document.getElementById(id);
+          if (el && c[key]) el.textContent = c[key];
+        };
+        if (c.va_document_title) document.title = c.va_document_title;
+        setText('wiki-badge', 'va_badge');
+        setText('wiki-heading', 'va_page_heading');
+        setText('wiki-intro', 'va_intro_paragraph');
+        const browserNote = document.getElementById('wiki-browser-note');
+        if (browserNote && c.va_browser_note) {
+          browserNote.textContent = c.va_browser_note;
+          browserNote.hidden = false;
+        }
+        setText('wiki-ptt-intro', 'va_ptt_intro');
+        setText('ptt', 'va_ptt_button');
+        setText('wiki-speak-toggle', 'va_speak_toggle');
+        setText('wiki-manual-label', 'va_manual_label');
+        const manual = document.getElementById('manual');
+        if (manual && c.va_manual_placeholder) manual.placeholder = c.va_manual_placeholder;
+        setText('wiki-reply-heading', 'va_reply_heading');
+        setText('playReplyBtn', 'va_play_button');
+        if (c.va_play_button_title) {
+          const playBtn = document.getElementById('playReplyBtn');
+          if (playBtn) playBtn.title = c.va_play_button_title;
+        }
+        setText('wiki-chunks-label', 'va_chunks_summary_label');
+        setText('sendManual', 'va_send_manual');
+      } catch (_) { /* keep placeholders */ }
+    }
+
+    void (async () => {
+    await applyWikiSiteCopy();
+
+    const ptt = document.getElementById('ptt');
+    const speechStatus = document.getElementById('speechStatus');
+    const replyEl = document.getElementById('reply');
+    const sourcesWrap = document.getElementById('sourcesWrap');
+    const sourcesEl = document.getElementById('sources');
+    const manual = document.getElementById('manual');
+    const sendManual = document.getElementById('sendManual');
+    const speakToggle = document.getElementById('speak');
+    const playReplyBtn = document.getElementById('playReplyBtn');
+    let lastReplyText = '';
+    /** WAV / WebAudio playback speed from /api/health (pitch may shift slightly). */
+    let playbackRate = 1.2;
+
+    let friendlyBrowserVoice = null;
+    function invalidateFriendlyVoice() {
+      friendlyBrowserVoice = null;
+    }
+    /** Prefer a clear, natural English voice when the browser falls back to speechSynthesis. */
+    function pickFriendlyBrowserVoice() {
+      if (friendlyBrowserVoice) return friendlyBrowserVoice;
+      const voices = window.speechSynthesis.getVoices();
+      if (!voices || !voices.length) return null;
+      const en = voices.filter((v) => (v.lang || '').toLowerCase().startsWith('en'));
+      const pool = en.length ? en : voices;
+      const prefer = /Aria|Jenny|Samantha|Karen|Victoria|Zira|Flo|Google US English|Google UK English Female|Microsoft.*English.*United States.*Female/i;
+      for (let i = 0; i < pool.length; i++) {
+        if (prefer.test(pool[i].name)) {
+          friendlyBrowserVoice = pool[i];
+          return friendlyBrowserVoice;
+        }
+      }
+      friendlyBrowserVoice = pool[0];
+      return friendlyBrowserVoice;
+    }
+    try {
+      window.speechSynthesis.addEventListener('voiceschanged', invalidateFriendlyVoice);
+    } catch (_) {}
+
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    let listening = false;
+
+    function setStatus(msg, isErr) {
+      speechStatus.textContent = msg || '';
+      speechStatus.className = 'status' + (isErr ? ' err' : '');
+    }
+
+    function speakText(text) {
+      if (!speakToggle.checked || !text) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = Math.min(1.5, Math.max(0.85, playbackRate));
+      const v = pickFriendlyBrowserVoice();
+      if (v) u.voice = v;
+      window.speechSynthesis.speak(u);
+    }
+
+    /**
+     * Call from a **click** handler: unlocks Web Audio so playback works after slow /api/tts.
+     */
+    async function playTtsUnlockedByGesture(text) {
+      if (!speakToggle.checked || !text) return;
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) {
+        await speakReply(text, { userClick: true });
+        return;
+      }
+      const ctx = new Ctx();
+      await ctx.resume();
+      setStatus(copy('va_status_generating_server', 'Generating VibeVoice (server)…'));
+      try {
+        const r = await fetch('/api/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text }),
+        });
+        if (!r.ok) {
+          setStatus(copyTpl('va_status_tts_failed', 'VibeVoice /api/tts failed ({{status}}) — using browser voice.', { status: r.status }), true);
+          speakText(text);
+          try { ctx.close(); } catch (_) {}
+          return;
+        }
+        const arr = await r.arrayBuffer();
+        if (!arr || arr.byteLength < 100) {
+          setStatus(copy('va_status_tts_small', 'TTS file too small — using browser voice.'), true);
+          speakText(text);
+          try { ctx.close(); } catch (_) {}
+          return;
+        }
+        setStatus(copy('va_status_decoding', 'Decoding WAV…'));
+        const audioBuf = await ctx.decodeAudioData(arr.slice(0));
+        const src = ctx.createBufferSource();
+        src.buffer = audioBuf;
+        src.playbackRate.value = playbackRate;
+        src.connect(ctx.destination);
+        src.onended = () => {
+          try { ctx.close(); } catch (_) {}
+          setStatus(copy('va_status_playback_finished', 'Playback finished.'));
+        };
+        src.start(0);
+        setStatus(copy('va_status_playing', 'Playing VibeVoice…'));
+      } catch (e) {
+        try { ctx.close(); } catch (_) {}
+        setStatus(copyTpl('va_status_audio_error', 'Audio error: {{message}} — trying browser voice.', { message: (e && e.message) || '' }), true);
+        speakText(text);
+      }
+    }
+
+    /**
+     * Prefer VibeVoice /api/tts WAV; fall back to browser speechSynthesis.
+     * @param {{ userClick?: boolean }} opts - legacy; use playTtsUnlockedByGesture from buttons.
+     */
+    async function speakReply(text, opts = {}) {
+      if (!speakToggle.checked || !text) return;
+      const userClick = !!opts.userClick;
+      if (userClick) {
+        await playTtsUnlockedByGesture(text);
+        return;
+      }
+      let statusTimer = null;
+      try {
+        setStatus(copy('va_status_generating_long', 'Generating VibeVoice audio (CPU can take 30–120s)…'));
+        statusTimer = setTimeout(() => {
+          setStatus(copy('va_status_still_generating', 'Still generating speech… If nothing plays, click Play reply.'));
+        }, 8000);
+        const r = await fetch('/api/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text }),
+        });
+        clearTimeout(statusTimer);
+        statusTimer = null;
+        if (!r.ok) {
+          setStatus(copyTpl('va_status_tts_failed', 'VibeVoice /api/tts failed ({{status}}) — using browser voice.', { status: r.status }), true);
+          speakText(text);
+          return;
+        }
+        const blob = await r.blob();
+        if (!blob || blob.size < 100) {
+          setStatus(copy('va_status_tts_empty', 'TTS returned an empty or tiny file — using browser voice.'), true);
+          speakText(text);
+          return;
+        }
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio();
+        audio.preload = 'auto';
+        audio.playsInline = true;
+        audio.src = url;
+        audio.playbackRate = playbackRate;
+        if ('preservesPitch' in audio) {
+          try { audio.preservesPitch = true; } catch (_) {}
+        }
+        audio.onended = () => URL.revokeObjectURL(url);
+        audio.onerror = () => {
+          URL.revokeObjectURL(url);
+          setStatus(copy('va_status_decode_failed', 'Could not decode/play WAV — using browser voice.'), true);
+          speakText(text);
+        };
+        try {
+          await audio.play();
+          setStatus(copy('va_status_playing_audio', 'Playing VibeVoice audio…'));
+        } catch (playErr) {
+          const name = playErr && playErr.name;
+          if (name === 'NotAllowedError') {
+            setStatus(copy('va_status_autoplay_blocked', 'Autoplay blocked. Click Play reply to hear VibeVoice.'), true);
+          } else {
+            setStatus(copyTpl('va_status_play_failed', 'Audio play failed: {{message}} — trying browser voice.', { message: (playErr && playErr.message) || '' }), true);
+          }
+          speakText(text);
+        }
+      } catch (e) {
+        if (statusTimer) clearTimeout(statusTimer);
+        setStatus(copyTpl('va_status_tts_request_failed', 'TTS request failed: {{message}} — trying browser voice.', { message: (e && e.message) || '' }), true);
+        speakText(text);
+      }
+    }
+
+    async function sendChat(transcript) {
+      const t = (transcript || '').trim();
+      if (!t) return;
+      replyEl.textContent = copy('va_thinking', 'Thinking…');
+      sourcesWrap.hidden = true;
+      sendManual.disabled = true;
+      ptt.disabled = true;
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transcript: t }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data.detail || res.statusText || 'Request failed');
+        }
+        lastReplyText = data.reply || '';
+        replyEl.textContent = lastReplyText;
+        playReplyBtn.disabled = !lastReplyText;
+        await speakReply(lastReplyText, { userClick: false });
+        if (data.sources && data.sources.length) {
+          sourcesEl.textContent = JSON.stringify(data.sources, null, 2);
+          sourcesWrap.hidden = false;
+        }
+      } catch (e) {
+        replyEl.textContent = '';
+        setStatus(String(e.message || e), true);
+      } finally {
+        sendManual.disabled = false;
+        ptt.disabled = !recognition;
+      }
+    }
+
+    if (!SR) {
+      setStatus(copy('va_status_no_speech_api', 'Web Speech API not available in this browser. Use the text box below.'), true);
+      ptt.disabled = true;
+    } else {
+      recognition = new SR();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.continuous = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onresult = (ev) => {
+        const text = ev.results[0][0].transcript;
+        setStatus(copy('va_status_heard_prefix', 'Heard:') + ' ' + text);
+        sendChat(text);
+      };
+      recognition.onerror = (ev) => {
+        setStatus(copy('va_status_speech_error_prefix', 'Speech recognition:') + ' ' + ev.error, true);
+        listening = false;
+        ptt.classList.remove('active');
+        ptt.textContent = copy('va_ptt_button', 'Hold to speak');
+      };
+      recognition.onend = () => {
+        listening = false;
+        ptt.classList.remove('active');
+        ptt.textContent = copy('va_ptt_button', 'Hold to speak');
+      };
+
+      ptt.disabled = false;
+      ptt.addEventListener('mousedown', startPtt);
+      ptt.addEventListener('mouseup', endPtt);
+      ptt.addEventListener('mouseleave', cancelPtt);
+      ptt.addEventListener('touchstart', (e) => { e.preventDefault(); startPtt(); }, { passive: false });
+      ptt.addEventListener('touchend', (e) => { e.preventDefault(); endPtt(); });
+    }
+
+    function startPtt() {
+      if (!recognition || listening) return;
+      listening = true;
+      ptt.classList.add('active');
+      ptt.textContent = copy('va_ptt_listening', 'Listening…');
+      setStatus(copy('va_status_listening', 'Listening…'));
+      try {
+        recognition.start();
+      } catch (e) {
+        setStatus(String(e.message || e), true);
+        listening = false;
+        ptt.classList.remove('active');
+        ptt.textContent = copy('va_ptt_button', 'Hold to speak');
+      }
+    }
+
+    function endPtt() {
+      if (!recognition || !listening) return;
+      try {
+        recognition.stop();
+      } catch (_) { /* noop */ }
+    }
+
+    function cancelPtt() {
+      if (!recognition || !listening) return;
+      try {
+        recognition.abort();
+      } catch (_) { /* noop */ }
+      listening = false;
+      ptt.classList.remove('active');
+      ptt.textContent = copy('va_ptt_button', 'Hold to speak');
+    }
+
+    sendManual.addEventListener('click', () => sendChat(manual.value));
+
+    playReplyBtn.addEventListener('click', () => {
+      if (!lastReplyText) return;
+      playTtsUnlockedByGesture(lastReplyText);
+    });
+
+    fetch('/api/health')
+      .then((r) => r.json())
+      .then((h) => {
+        let err = h.vibevoice_tts_error || '';
+        if (err.length > 200) err = err.slice(0, 200) + '…';
+        const tts = h.vibevoice_tts_loaded
+          ? copy('va_status_tts_loaded', 'VibeVoice TTS loaded.')
+          : copy('va_status_tts_not_loaded', 'VibeVoice TTS not loaded (browser voice fallback).') + ' ' + (err ? err + ' ' : '');
+        if (typeof h.playback_rate === 'number' && h.playback_rate > 0) {
+          playbackRate = h.playback_rate;
+        }
+        const stepHint = (h.vibevoice_diffusion_steps != null)
+          ? (' Steps=' + h.vibevoice_diffusion_steps + ', playRate=' + playbackRate.toFixed(2) + 'x.')
+          : '';
+        setStatus(copy('va_status_ready_intro', 'Ready. Hold the button and speak, or type a question.') + ' ' + tts + stepHint);
+      })
+      .catch(() => setStatus(copy('va_status_health_unreachable', 'Cannot reach /api/health — is the server running?'), true));
+    })();
+  </script>
+</body>
+</html>

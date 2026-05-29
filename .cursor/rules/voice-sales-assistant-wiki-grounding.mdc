@@ -1,0 +1,26 @@
+---
+description: Voice sales demo grounds company facts in allowlisted wiki plus raw/hammer-data markdown—no hallucinations
+globs: demo/**/*,wiki/**/*.md
+alwaysApply: false
+---
+
+# Voice sales assistant — wiki + Hammer markdown facts
+
+When implementing, prompting, or reviewing the **voice sales assistant** demo, treat **`wiki/`** (per [wiki/company-voice-demo-canonical.md](wiki/company-voice-demo-canonical.md)) **plus** **`raw/hammer-data/**/*.md`** as the **authoritative corpora** for anything that sounds like a fact about **your company** (products, pricing, customers, integrations, metrics, positioning, legal claims). Prefer synthesized wiki wording for fragile stats; raw transcripts are secondary.
+
+## Hard requirements
+
+1. **Runtime knowledge** (RAG index, tool-retrieval allowlists, static JSON/YAML copy, system prompts listing facts, few-shot Q&A) for company/product claims must be **sourced only** from: (a) the allowlisted wiki pages in `company-voice-demo-canonical.md`, and (b) markdown under `raw/hammer-data/`. Do not pull company facts from other `raw/` trees, ad-hoc markdown elsewhere, the root `README.md`, or the open web for “helpful filler.”
+2. **No invented specifics.** If a detail (number, name, date, integration, price, stat) is not explicitly present in the allowlisted wiki or in `raw/hammer-data/`, the assistant must **not** assert it. Prefer: brief deflection (“I don’t have that detail here”) or offer to **continue the conversation without that fact**—never guess.
+3. **When adding new demo copy or tool schemas**, first **extend `wiki/`** (and `wiki/index.md` / `wiki/log.md` per `AGENTS.md` if you use the LLM Wiki workflow), add or sync markdown under `raw/hammer-data/` as needed, then wire the assistant—**never** the reverse (assistant text first, sources later).
+4. **Multiple topics in `wiki/`** (e.g. upstream project vs. your business): define **one canonical page** for the public demo (e.g. `wiki/company-voice-demo-canonical.md`) that lists what the voice may use; restrict retrieval so unrelated wiki notes cannot leak into answers.
+
+## Implementation hints
+
+- If you use embeddings or search, **scope the index** to the canonical wiki allowlist **and** `raw/hammer-data/**/*.md` unless product policy tightens again.
+- Treat `raw/hammer-data/` as **sales/marketing-sourced**; do not treat it as more authoritative than the curated wiki when they conflict.
+- Log or test: questions the assistant cannot answer from **wiki + `raw/hammer-data/`** should get **safe refusals**, not general-knowledge completions.
+
+## Quick check before shipping
+
+- Can every factual sentence in the demo script be traced to a **verbatim or clearly cited** passage in the allowlisted wiki or in `raw/hammer-data/`? If not, fix the sources or remove the claim.

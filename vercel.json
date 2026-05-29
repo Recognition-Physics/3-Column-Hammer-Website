@@ -1,0 +1,18 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "cd demo/realtime-sales-demo/web && npm ci --include=dev",
+  "buildCommand": "cd demo/realtime-sales-demo/web && npm run build",
+  "outputDirectory": "demo/realtime-sales-demo/web/dist",
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 60,
+      "includeFiles": "{wiki/**,knowledge/**,demo/realtime-sales-demo/server/**,demo/realtime-sales-demo/web/src/*.ts,demo/shared/**,raw/hammer-data/**}"
+    }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index" },
+    { "source": "/admin/:path*", "destination": "/api/index" },
+    { "source": "/email/:path*", "destination": "/email/:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
