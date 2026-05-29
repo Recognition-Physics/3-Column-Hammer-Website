@@ -61,7 +61,7 @@ const REALTIME_PLAYGROUND_PARITY = envTruthy(
 const SIGN_IN_URL: string =
   (import.meta as ImportMeta & { env: Record<string, string | undefined> }).env
     .VITE_SIGN_IN_URL?.trim() ||
-  "https://www2.hammer-corp.com/session/new?continue=https%3A%2F%2Fdashboard.hammer-corp.com%2F";
+  "https://www2.hammer-corp.com/session/new?continue=https%3A%2F%2Foffice.hammer-corp.com%2F";
 
 /** HubSpot support form — footer "Contact Support" panel. Override region: `VITE_HUBSPOT_FORM_REGION`. */
 const HUBSPOT_PORTAL_ID = "3355079";
@@ -707,19 +707,13 @@ const iconProductColCheck = `<svg viewBox="0 0 12 12" fill="none" stroke="curren
 /** Microphone glyph centered inside the nav-panel footer voice signal orb. */
 const iconNavFootMic = `<span class="nav-panel__foot-mic" aria-hidden="true"><svg class="nav-panel__foot-mic-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.25a2.75 2.75 0 0 0-2.75 2.75v7a2.75 2.75 0 0 0 5.5 0v-7A2.75 2.75 0 0 0 12 2.25z"/><path d="M7.5 12a4.5 4.5 0 0 0 9 0"/><path d="M12 18.75v2.25"/><path d="M9 21h6"/></svg></span>`;
 
-/** Footer voice CTA — mic glyph + ripple rings + sound waves. */
-const iconFooterCtaMic = `<span class="footer-cta__mic" aria-hidden="true">
-  <span class="footer-cta__mic-ring footer-cta__mic-ring--a"></span>
-  <span class="footer-cta__mic-ring footer-cta__mic-ring--b"></span>
-  <span class="footer-cta__mic-wave footer-cta__mic-wave--l"></span>
-  <span class="footer-cta__mic-wave footer-cta__mic-wave--r"></span>
-  <svg class="footer-cta__mic-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 2.25a2.75 2.75 0 0 0-2.75 2.75v7a2.75 2.75 0 0 0 5.5 0v-7A2.75 2.75 0 0 0 12 2.25z"/>
-    <path d="M7.5 12a4.5 4.5 0 0 0 9 0"/>
-    <path d="M12 18.75v2.25"/>
-    <path d="M9 21h6"/>
-  </svg>
-</span>`;
+/** Footer voice CTA — static mic glyph. */
+const iconFooterCtaMic = `<svg class="footer-cta__mic-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M12 2.25a2.75 2.75 0 0 0-2.75 2.75v7a2.75 2.75 0 0 0 5.5 0v-7A2.75 2.75 0 0 0 12 2.25z"/>
+  <path d="M7.5 12a4.5 4.5 0 0 0 9 0"/>
+  <path d="M12 18.75v2.25"/>
+  <path d="M9 21h6"/>
+</svg>`;
 
 /** Mini voice orb for live â€œEnd callâ€ pill â€” driven by voice-audio-visualizer.ts */
 const iconGlassVoiceAuraMini = `<span class="landing-cta__voice-orb is-speaking" aria-hidden="true">
@@ -997,6 +991,8 @@ let openNavPanel: NavPanelId | null = initialOpenNavPanel();
 let mobileNavMenuOpen = false;
 let leadModalOpen = false;
 let callMeModalOpen = false;
+/** Product name from the card Sign Up button that last opened the lead modal (e.g. "Hammer Drive"). */
+let leadModalSourceProduct = "";
 
 const CHROME_NAV_SECTIONS: { id: NavPanelId; key: string; fallback: string; controls: string }[] = [];
 
@@ -1028,7 +1024,7 @@ function renderChromeSignUpButton(opts?: { id?: string; extraClass?: string; dat
 
 function renderChromeLoginLink(extraClass = ""): string {
   const cls = `chrome__jump chrome__jump--login${extraClass ? ` ${extraClass}` : ""}`;
-  return `<a class="${cls}" href="https://office.hammer-corp.com" target="_blank" rel="noopener noreferrer">${escapeHtml(copy("rt_site_footer_login", "Login"))}</a>`;
+  return `<a class="${cls}" href="${escapeHtml(SIGN_IN_URL)}" target="_blank" rel="noopener noreferrer">${escapeHtml(copy("rt_site_footer_login", "Login"))}</a>`;
 }
 
 function navPanelTitle(panel: NavPanelId): string {
@@ -1191,11 +1187,11 @@ const PRODUCT_COL_SPECS: ProductColSpec[] = [
     nameKey: "rt_product_drive_name",
     nameFallback: "Hammer Drive",
     taglineKey: "rt_product_drive_tagline",
-    taglineFallback: "Answers every lead instantly, follows up until they book.",
+    taglineFallback: "Instantly answers leads from every source, then follows up until they book.",
     bullets: [
-      { key: "rt_product_drive_b1", fallback: "Works with all your lead sources." },
-      { key: "rt_product_drive_b2", fallback: "Replies in seconds, day or night." },
-      { key: "rt_product_drive_b3", fallback: "Follows up for weeks when buyers go quiet." },
+      { key: "rt_product_drive_b1", fallback: "Replies in seconds, day or night." },
+      { key: "rt_product_drive_b2", fallback: "Follows up for weeks when buyers go quiet." },
+      { key: "rt_product_drive_b3", fallback: "Books the appointment right in your CRM." },
     ],
     voiceAriaKey: "rt_product_voice_aria_drive",
     voiceAriaFallback: "Ask Hannah to pitch you on Hammer Drive",
@@ -1221,11 +1217,11 @@ const PRODUCT_COL_SPECS: ProductColSpec[] = [
     nameKey: "rt_product_mp_name",
     nameFallback: "MarketPoster",
     taglineKey: "rt_product_mp_tagline",
-    taglineFallback: "One-click posting to Facebook Marketplace.",
+    taglineFallback: "Post your whole lot to Facebook Marketplace in one click.",
     bullets: [
-      { key: "rt_product_mp_b1", fallback: "No retyping price, photos, or VIN." },
+      { key: "rt_product_mp_b1", fallback: "Never retype price, photos, or VIN." },
       { key: "rt_product_mp_b2", fallback: "Select cars and post in bulk." },
-      { key: "rt_product_mp_b3", fallback: "Plans for teams that post every day." },
+      { key: "rt_product_mp_b3", fallback: "Auto-reposts so your listings stay on top." },
     ],
     voiceAriaKey: "rt_product_voice_aria_mp",
     voiceAriaFallback: "Ask Hannah to pitch you on MarketPoster",
@@ -1248,6 +1244,7 @@ function renderProductColCard(spec: ProductColSpec, live: boolean, connecting: b
                 </div>
                 <footer class="product-col__foot">
                   <button type="button" class="product-col__signup" data-action="open-sign-up"
+                    data-product="${escapeHtml(name)}"
                     aria-label="${escapeHtml(copy("rt_nav_sign_up_aria", "Sign up for Hammer"))}">
                     ${escapeHtml(copy("rt_nav_cta", "Sign Up"))}
                   </button>
@@ -1393,11 +1390,11 @@ function renderHomeHeroHtml(): string {
 }
 
 function renderFooterCtaHtml(live: boolean, connecting: boolean): string {
-  const ctaLabel = copy("rt_home_voice_cta", "Ask our voice AI about Hammer");
+  const ctaLabel = copy("rt_home_voice_cta", "Speak with our voice AI — live");
   if (NAV_PANEL_VOICE_ENABLED) {
     return `<button type="button"
               id="footerCtaVoice"
-              class="footer-cta__pill footer-cta__pill--voice${live ? " is-live" : ""}${connecting ? " is-connecting" : ""}${live && !REDUCE_MOTION ? " mic-reactive" : ""}"
+              class="footer-cta__pill footer-cta__pill--voice${live ? " is-live" : ""}${connecting ? " is-connecting" : ""}"
               data-voice-scenario="hammer"
               ${connecting ? "disabled" : ""}
               aria-label="${connecting ? escapeHtml(copy("rt_call_aria_connecting", "Connecting…")) : live ? escapeHtml(copy("rt_call_aria_end", "End call")) : escapeHtml(ctaLabel)}">
@@ -1409,7 +1406,7 @@ function renderFooterCtaHtml(live: boolean, connecting: boolean): string {
     return `<button type="button" class="footer-cta__pill footer-cta__pill--phone" id="footerCtaVoice"
               aria-label="${escapeHtml(copy("rt_call_aria_phone", "Call Hannah on your phone"))}" aria-haspopup="dialog">
               <span class="footer-cta__pill-wave footer-cta__pill-wave--phone" aria-hidden="true">${iconLandingCtaPhone}</span>
-              <span class="footer-cta__pill-label">${escapeHtml(copy("rt_home_voice_cta", "Ask our voice AI about Hammer"))}</span>
+              <span class="footer-cta__pill-label">${escapeHtml(copy("rt_home_voice_cta", "Speak with our voice AI — live"))}</span>
             </button>`;
   }
   return `<button type="button" class="footer-cta__pill" data-action="open-sign-up" aria-label="${escapeHtml(copy("rt_nav_sign_up_aria", "Sign up for Hammer"))}">
@@ -2034,9 +2031,6 @@ function mount() {
     root.querySelectorAll<HTMLElement>(".product-col-voice-orb__glow").forEach((el) => {
       el.classList.toggle("is-assistant-speaking", assistantSpeaking);
     });
-    root.querySelectorAll<HTMLElement>("#footerCtaVoice.is-live").forEach((el) => {
-      el.classList.toggle("is-assistant-speaking", assistantSpeaking);
-    });
   }
 
   function usesInlineFooterVoiceUi(): boolean {
@@ -2049,14 +2043,12 @@ function mount() {
 
     const connecting = uiState === "connecting";
     const live = uiState === "live";
-    const ctaLabel = copy("rt_home_voice_cta", "Ask our voice AI about Hammer");
+    const ctaLabel = copy("rt_home_voice_cta", "Speak with our voice AI — live");
     const endLabel = copy("rt_call_aria_end", "End call");
     const connectingLabel = copy("rt_call_aria_connecting", "Connecting…");
 
     btn.classList.toggle("is-connecting", connecting);
     btn.classList.toggle("is-live", live);
-    btn.classList.toggle("mic-reactive", live && !REDUCE_MOTION);
-    btn.classList.toggle("is-assistant-speaking", live && assistantSpeaking);
     btn.disabled = connecting;
 
     if (connecting) {
@@ -2354,7 +2346,11 @@ function mount() {
         const res = await fetch("/api/lead", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...payload, channel: "website" }),
+          body: JSON.stringify({
+            ...payload,
+            channel: "website",
+            ...(leadModalSourceProduct ? { selected_plan: leadModalSourceProduct } : {}),
+          }),
         });
         if (!res.ok) throw new Error(await readHttpErrorBody(res));
         setLeadStatus(copy("rt_lead_success", "Thanks, we received your info."), "success");
@@ -2385,6 +2381,8 @@ function mount() {
   function wireTryButtons() {
     const openSignUpModal = (e?: Event) => {
       e?.preventDefault();
+      const btn = (e?.currentTarget ?? e?.target) as HTMLElement | null;
+      leadModalSourceProduct = btn?.dataset.product?.trim() ?? "";
       openNavPanel = null;
       callMeModalOpen = false;
       leadModalOpen = true;
@@ -2440,7 +2438,7 @@ function mount() {
       });
     }
     root.querySelector("#footerSecondary")?.addEventListener("click", () => {
-      window.open("https://office.hammer-corp.com", "_blank", "noopener");
+      window.open(SIGN_IN_URL, "_blank", "noopener");
     });
     wireCallMeModal();
   }
