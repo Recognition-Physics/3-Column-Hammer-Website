@@ -557,32 +557,6 @@ function landingPhoneCtaLabel(phone: { display: string; tel: string }): string {
   return copy("rt_landing_cta", "Take the Challenge");
 }
 
-function chromePhonePillLabel(phone: { display: string; tel: string }): string {
-  const digits = (phone.tel || phone.display).replace(/\D/g, "");
-  if (!digits) {
-    return copy("rt_chrome_phone_pending", "Try our voice AI");
-  }
-  return phone.display.trim() || formatUsPhoneDisplay(digits);
-}
-
-function renderChromePhoneLinkHtml(variant: "header" | "mobile" = "header"): string {
-  const phone = demoPhoneInfo();
-  const digits = (phone.tel || phone.display).replace(/\D/g, "");
-  if (!digits || !phone.href) return "";
-  const label = chromePhonePillLabel(phone);
-  const prefix = copy("rt_chrome_phone_prefix", "Try our voice AI");
-  const ariaTemplate = copy("rt_chrome_phone_aria", "Try our voice AI at {phone}");
-  const phoneAria = ariaTemplate.includes("{phone}")
-    ? ariaTemplate.replace(/\{phone\}/g, label)
-    : ariaTemplate;
-  const modClass = variant === "mobile" ? " chrome__phone-link--mobile" : " chrome__phone-link--header";
-  return `<a class="chrome__phone-link${modClass}" href="${escapeHtml(phone.href)}"
-              aria-label="${escapeHtml(phoneAria)}">
-              <span class="chrome__phone-link__prefix">${escapeHtml(prefix)}</span>
-              <span class="chrome__phone-link__number">${escapeHtml(label)}</span>
-            </a>`;
-}
-
 /** Minimal instructions for A/B vs BASE_INSTRUCTIONS (Platform playgroundâ€“style neutral assistant). */
 const PLAYGROUND_PARITY_INSTRUCTIONS = `
 You are a helpful assistant named Hannah. Reply concisely in plain spoken English â€” short sentences, natural flow. Answer directly without meta-commentary or lists unless asked.
@@ -946,10 +920,7 @@ let mobileNavMenuOpen = false;
 let leadModalOpen = false;
 let callMeModalOpen = false;
 
-const CHROME_NAV_SECTIONS: { id: NavPanelId; key: string; fallback: string; controls: string }[] = [
-  { id: "reviews", key: "rt_nav_reviews", fallback: "Reviews", controls: "navPanelReviews" },
-  { id: "faq", key: "rt_nav_faq", fallback: "FAQ", controls: "navPanelFaq" },
-];
+const CHROME_NAV_SECTIONS: { id: NavPanelId; key: string; fallback: string; controls: string }[] = [];
 
 function renderChromeNavJumpButtons(extraClass = ""): string {
   return CHROME_NAV_SECTIONS.map(({ id, key, fallback, controls }) => {
@@ -962,6 +933,11 @@ function renderChromeNavJumpButtons(extraClass = ""): string {
   }).join("\n");
 }
 
+function renderFooterReviewsButton(): string {
+  const active = openNavPanel === "reviews";
+  return `<button type="button" class="chrome__jump chrome__jump--panel${active ? " is-active" : ""}" data-panel="reviews" aria-expanded="${active}" aria-controls="navPanelReviews" id="footerOpenReviews">${escapeHtml(copy("rt_nav_reviews", "Reviews"))}</button>`;
+}
+
 function renderChromeSignUpButton(opts?: { id?: string; extraClass?: string; dataAction?: string }): string {
   const extraClass = opts?.extraClass ?? "";
   const active = leadModalOpen ? " is-active" : "";
@@ -970,6 +946,11 @@ function renderChromeSignUpButton(opts?: { id?: string; extraClass?: string; dat
   const actionAttr = opts?.dataAction ? ` data-action="${opts.dataAction}"` : "";
   return `<button type="button" class="${cls}"${idAttr}${actionAttr} aria-label="${escapeHtml(copy("rt_nav_sign_up_aria", "Sign up for Hammer"))}">
               ${escapeHtml(copy("rt_nav_cta", "Sign Up"))}            </button>`;
+}
+
+function renderChromeLoginLink(extraClass = ""): string {
+  const cls = `chrome__jump chrome__jump--login${extraClass ? ` ${extraClass}` : ""}`;
+  return `<a class="${cls}" href="https://office.hammer-corp.com" target="_blank" rel="noopener noreferrer">${escapeHtml(copy("rt_site_footer_login", "Login"))}</a>`;
 }
 
 function navPanelTitle(panel: NavPanelId): string {
@@ -1349,6 +1330,11 @@ function renderHomeHeroHtml(): string {
 
 function renderFooterCtaHtml(live: boolean, connecting: boolean): string {
   const ctaLabel = copy("rt_home_voice_cta", "Ask our AI about products");
+  const metaLabel = connecting
+    ? copy("rt_home_voice_meta_connecting", "Connecting…")
+    : live
+      ? copy("rt_home_voice_meta_live", "Tap to end call")
+      : copy("rt_home_voice_meta", "Live voice · Hannah");
   if (NAV_PANEL_VOICE_ENABLED) {
     return `<button type="button"
               id="footerCtaVoice"
@@ -1356,8 +1342,17 @@ function renderFooterCtaHtml(live: boolean, connecting: boolean): string {
               data-voice-scenario="hammer"
               ${connecting ? "disabled" : ""}
               aria-label="${connecting ? escapeHtml(copy("rt_call_aria_connecting", "Connecting…")) : live ? escapeHtml(copy("rt_call_aria_end", "End call")) : escapeHtml(ctaLabel)}">
-              <span class="footer-cta__pill-wave" aria-hidden="true">${iconFooterCtaMic}</span>
-              <span class="footer-cta__pill-label">${live ? escapeHtml(copy("rt_call_aria_end", "End call")) : escapeHtml(ctaLabel)}</span>
+              <span class="footer-cta__aura" aria-hidden="true"></span>
+              <span class="footer-cta__orb" aria-hidden="true">
+                <span class="footer-cta__pill-wave">${iconFooterCtaMic}</span>
+              </span>
+              <span class="footer-cta__copy">
+                <span class="footer-cta__pill-label">${live ? escapeHtml(copy("rt_call_aria_end", "End call")) : escapeHtml(ctaLabel)}</span>
+                <span class="footer-cta__pill-meta">${escapeHtml(metaLabel)}</span>
+              </span>
+              <span class="footer-cta__action" aria-hidden="true">
+                <svg class="footer-cta__chevron" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3.5 9.5 7 5 10.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
             </button>`;
   }
   if (outboundCallMePrimary()) {
@@ -2023,8 +2018,16 @@ function mount() {
     }
 
     const label = btn.querySelector(".footer-cta__pill-label");
+    const meta = btn.querySelector(".footer-cta__pill-meta");
     if (label) {
       label.textContent = live ? endLabel : ctaLabel;
+    }
+    if (meta) {
+      meta.textContent = connecting
+        ? connectingLabel
+        : live
+          ? copy("rt_home_voice_meta_live", "Tap to end call")
+          : copy("rt_home_voice_meta", "Live voice · Hannah");
     }
   }
 
@@ -2336,7 +2339,7 @@ function mount() {
       document.body.style.overflow = "hidden";
       if (!stopNavPanelVoiceOnDismiss()) render();
     };
-    root.querySelectorAll("#navCta, [data-action='open-sign-up']").forEach((el) => {
+    root.querySelectorAll("[data-action='open-sign-up']").forEach((el) => {
       el.addEventListener("click", openSignUpModal);
     });
     if (NAV_PANEL_VOICE_ENABLED) {
@@ -2487,30 +2490,27 @@ function mount() {
           <a class="chrome__brand-link" href="${import.meta.env.BASE_URL}" aria-label="${escapeHtml(copy("rt_brand_aria", "Hammer"))}">
             <span class="logo-img logo-img--hammer" role="img" aria-label="${escapeHtml(copy("rt_logo_text", "HAMMER"))}"></span>
           </a>
-          <nav class="chrome__nav" aria-label="${escapeHtml(copy("rt_nav_aria", "Sections"))}">
+          ${CHROME_NAV_SECTIONS.length ? `<nav class="chrome__nav" aria-label="${escapeHtml(copy("rt_nav_aria", "Sections"))}">
             ${renderChromeNavJumpButtons()}
-            ${renderChromeSignUpButton({ id: "navCta" })}
-          </nav>
-          <button type="button" class="chrome__menu-toggle${mobileNavMenuOpen ? " is-open" : ""}" id="chromeMenuToggle"
+          </nav>` : ""}
+          <div class="chrome__actions">
+            ${renderChromeLoginLink()}
+          </div>
+          ${CHROME_NAV_SECTIONS.length ? `<button type="button" class="chrome__menu-toggle${mobileNavMenuOpen ? " is-open" : ""}" id="chromeMenuToggle"
             aria-expanded="${mobileNavMenuOpen}" aria-controls="chromeMobileMenu"
             aria-label="${escapeHtml(mobileNavMenuOpen ? copy("rt_nav_menu_close_aria", "Close menu") : copy("rt_nav_menu_open_aria", "Open menu"))}">
             <span class="chrome__menu-icon" aria-hidden="true"></span>
-          </button>
-          <div class="chrome__actions">
-            ${renderChromePhoneLinkHtml("header")}
-          </div>
+          </button>` : ""}
         </header>
 
-        <div class="chrome-mobile-menu${mobileNavMenuOpen ? " is-open" : ""}" id="chromeMobileMenu"
+        ${CHROME_NAV_SECTIONS.length ? `<div class="chrome-mobile-menu${mobileNavMenuOpen ? " is-open" : ""}" id="chromeMobileMenu"
           ${mobileNavMenuOpen ? "" : "hidden"} aria-hidden="${mobileNavMenuOpen ? "false" : "true"}">
           <button type="button" class="chrome-mobile-menu__backdrop" data-action="close-mobile-menu" tabindex="-1"
             aria-label="${escapeHtml(copy("rt_nav_menu_close_aria", "Close menu"))}"></button>
           <nav class="chrome-mobile-menu__sheet" aria-label="${escapeHtml(copy("rt_nav_aria", "Sections"))}">
-            ${renderChromePhoneLinkHtml("mobile")}
             ${renderChromeNavJumpButtons("chrome__jump--mobile")}
-            ${renderChromeSignUpButton({ extraClass: "chrome__jump--mobile", dataAction: "open-sign-up" })}
           </nav>
-        </div>
+        </div>` : ""}
 
         <div class="nav-panel-layer ${openNavPanel ? "is-open" : ""}" ${openNavPanel ? "" : "hidden"} aria-hidden="${openNavPanel ? "false" : "true"}">
           <div class="nav-panel-backdrop" data-action="close" aria-hidden="true"></div>
@@ -2672,7 +2672,9 @@ function mount() {
               <button type="button" class="chrome__jump chrome__jump--panel${openNavPanel === "terms" ? " is-active" : ""}" data-panel="terms" aria-expanded="${openNavPanel === "terms"}" aria-controls="navPanelTerms" id="footerOpenTerms">${escapeHtml(copy("rt_site_footer_terms", "Terms of Service"))}</button>
               <button type="button" class="chrome__jump chrome__jump--panel${openNavPanel === "privacy" ? " is-active" : ""}" data-panel="privacy" aria-expanded="${openNavPanel === "privacy"}" aria-controls="navPanelPrivacy" id="footerOpenPrivacy">${escapeHtml(copy("rt_site_footer_privacy", "Privacy Policy"))}</button>
             </div>
-            <a class="chrome__jump" href="https://office.hammer-corp.com" target="_blank" rel="noopener noreferrer">${escapeHtml(copy("rt_site_footer_login", "Login"))}</a>
+            <div class="site-footer__reviews">
+              ${renderFooterReviewsButton()}
+            </div>
           </nav>
         </footer>
         <div class="lead-modal-layer${leadModalOpen ? " is-open" : ""}" aria-hidden="${leadModalOpen ? "false" : "true"}">

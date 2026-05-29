@@ -1765,15 +1765,18 @@ body:has(.app-shell--landing) {
   grid-column: 1;
 }
 
-/* Login — bottom-right of footer bar */
-.app-shell--landing .site-footer__nav > a.chrome__jump {
-  grid-column: 2;
+.app-shell--landing .site-footer__reviews {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   justify-self: end;
-  margin-left: 0;
+  grid-column: 2;
+  min-width: 0;
 }
 
-/* Terms / Privacy — pill chips, bottom-left cluster */
-.app-shell--landing .site-footer__legal .chrome__jump {
+/* Terms / Privacy / Reviews — pill chips */
+.app-shell--landing .site-footer__legal .chrome__jump,
+.app-shell--landing .site-footer__reviews .chrome__jump {
   padding: 6px 14px !important;
   min-height: 32px;
   border: 1px solid var(--cal-accent-line) !important;
@@ -1782,20 +1785,36 @@ body:has(.app-shell--landing) {
   color: var(--cal-muted) !important;
 }
 
-.app-shell--landing .site-footer__legal .chrome__jump:hover {
+.app-shell--landing .site-footer__legal .chrome__jump:hover,
+.app-shell--landing .site-footer__reviews .chrome__jump:hover {
   color: var(--cal-accent) !important;
   border-color: var(--cal-accent-muted) !important;
   background: var(--cal-accent-soft) !important;
 }
 
-.app-shell--landing .site-footer__legal .chrome__jump--panel.is-active {
+.app-shell--landing .site-footer__legal .chrome__jump--panel.is-active,
+.app-shell--landing .site-footer__reviews .chrome__jump--panel.is-active {
   color: var(--cal-accent) !important;
   font-weight: 600;
   border-color: var(--cal-accent-line) !important;
   background: var(--cal-accent-soft) !important;
 }
 
-/* Footer controls = header chrome__jump (login stays text link on the right) */
+.app-shell--landing .chrome__actions {
+  grid-area: try;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.app-shell--landing .chrome__actions .chrome__jump--login {
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* Footer controls = header chrome__jump */
 .app-shell--landing .site-footer .chrome__jump {
   position: static;
   z-index: auto;

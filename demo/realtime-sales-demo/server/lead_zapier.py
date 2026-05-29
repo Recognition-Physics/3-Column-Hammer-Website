@@ -21,7 +21,7 @@ from hammer_agreement import dealership_display_name, enrich_agreement_payload
 
 
 class LeadCaptureRequest(BaseModel):
-    email: str = Field(..., min_length=3, max_length=200)
+    email: str = Field(default="", max_length=200)
     dealership_name: str | None = Field(
         None,
         max_length=200,
@@ -65,9 +65,9 @@ class LeadCaptureRequest(BaseModel):
                 raise ValueError("phone is required for website leads")
             if len(self.website.strip()) < 4:
                 raise ValueError("website is required for website leads")
-            if not self.role.strip():
-                raise ValueError("role is required for website leads")
             return self
+        if len(self.email.strip()) < 3:
+            raise ValueError("email is required for voice agreement email")
         if not (self.dealership_name or "").strip():
             raise ValueError("dealership_name is required for voice agreement email")
         if not (self.selected_plan or "").strip():
@@ -180,10 +180,12 @@ def build_zapier_payload(body: LeadCaptureRequest) -> dict[str, str]:
         "event": event,
         "channel": channel,
         "fullName": name,
-        "firstName": first or (normalize_email(body.email).split("@")[0] if "@" in body.email else ""),
+        "firstName": first or (
+            normalize_email(body.email).split("@")[0] if body.email.strip() and "@" in body.email else ""
+        ),
         "lastName": last,
         "notes": notes,
-        "email": normalize_email(body.email),
+        "email": normalize_email(body.email) if body.email.strip() else "",
         "phoneNumber": normalize_phone_e164(body.phone) if body.phone.strip() else "",
         "website": website_raw,
         "dealership": dealer_name,

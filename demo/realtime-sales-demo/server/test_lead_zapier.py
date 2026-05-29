@@ -209,6 +209,20 @@ class LeadZapierPayloadTests(unittest.TestCase):
         self.assertEqual(payload["leadSource"], "website form")
         self.assertNotIn("agreementEmailHtml", payload)
 
+    def test_website_lead_minimal_fields(self) -> None:
+        body = LeadCaptureRequest(
+            name="Tyler",
+            phone="5555555555",
+            website="https://test.com",
+            channel="website",
+        )
+        payload = build_zapier_payload(body)
+        self.assertEqual(payload["event"], "website_lead")
+        self.assertEqual(payload["fullName"], "Tyler")
+        self.assertEqual(payload["firstName"], "Tyler")
+        self.assertEqual(payload["email"], "")
+        self.assertEqual(payload["role"], "")
+
     def test_approval_tracking(self) -> None:
         record_agreement_approval_request(
             AgreementApprovalRequest(email="Sign@Up.com", approved=True, reply_text="I approve")
