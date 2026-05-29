@@ -1330,11 +1330,6 @@ function renderHomeHeroHtml(): string {
 
 function renderFooterCtaHtml(live: boolean, connecting: boolean): string {
   const ctaLabel = copy("rt_home_voice_cta", "Ask our AI about products");
-  const metaLabel = connecting
-    ? copy("rt_home_voice_meta_connecting", "Connecting…")
-    : live
-      ? copy("rt_home_voice_meta_live", "Tap to end call")
-      : copy("rt_home_voice_meta", "Live voice · Hannah");
   if (NAV_PANEL_VOICE_ENABLED) {
     return `<button type="button"
               id="footerCtaVoice"
@@ -1342,17 +1337,8 @@ function renderFooterCtaHtml(live: boolean, connecting: boolean): string {
               data-voice-scenario="hammer"
               ${connecting ? "disabled" : ""}
               aria-label="${connecting ? escapeHtml(copy("rt_call_aria_connecting", "Connecting…")) : live ? escapeHtml(copy("rt_call_aria_end", "End call")) : escapeHtml(ctaLabel)}">
-              <span class="footer-cta__aura" aria-hidden="true"></span>
-              <span class="footer-cta__orb" aria-hidden="true">
-                <span class="footer-cta__pill-wave">${iconFooterCtaMic}</span>
-              </span>
-              <span class="footer-cta__copy">
-                <span class="footer-cta__pill-label">${live ? escapeHtml(copy("rt_call_aria_end", "End call")) : escapeHtml(ctaLabel)}</span>
-                <span class="footer-cta__pill-meta">${escapeHtml(metaLabel)}</span>
-              </span>
-              <span class="footer-cta__action" aria-hidden="true">
-                <svg class="footer-cta__chevron" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3.5 9.5 7 5 10.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </span>
+              <span class="footer-cta__pill-wave" aria-hidden="true">${iconFooterCtaMic}</span>
+              <span class="footer-cta__pill-label">${live ? escapeHtml(copy("rt_call_aria_end", "End call")) : escapeHtml(ctaLabel)}</span>
             </button>`;
   }
   if (outboundCallMePrimary()) {
@@ -2018,16 +2004,8 @@ function mount() {
     }
 
     const label = btn.querySelector(".footer-cta__pill-label");
-    const meta = btn.querySelector(".footer-cta__pill-meta");
     if (label) {
       label.textContent = live ? endLabel : ctaLabel;
-    }
-    if (meta) {
-      meta.textContent = connecting
-        ? connectingLabel
-        : live
-          ? copy("rt_home_voice_meta_live", "Tap to end call")
-          : copy("rt_home_voice_meta", "Live voice · Hannah");
     }
   }
 
