@@ -13,6 +13,8 @@
     { "source": "/api/(.*)", "destination": "/api/index" },
     { "source": "/admin/:path*", "destination": "/api/index" },
     { "source": "/email/:path*", "destination": "/email/:path*" },
+    { "source": "/help", "destination": "/help/index.html" },
+    { "source": "/help/", "destination": "/help/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

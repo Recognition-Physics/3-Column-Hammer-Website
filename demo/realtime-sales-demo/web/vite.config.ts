@@ -1,11 +1,77 @@
 import type { ServerResponse } from "node:http";
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 
 const webRoot = path.dirname(fileURLToPath(import.meta.url));
 
+/** Serve public/help/index.html at /help (Vite dev/preview otherwise SPA-fallback to index.html). */
+function helpPageRoutePlugin() {
+  const rewriteHelpUrl = (url: string | undefined): string | undefined => {
+    const [pathname, search = ""] = (url ?? "").split("?");
+    if (pathname === "/help" || pathname === "/help/") {
+      return `/help/index.html${search ? `?${search}` : ""}`;
+    }
+    return url;
+  };
+
+  const install = (
+    middlewares: { use: (fn: (req: { url?: string }, res: unknown, next: () => void) => void) => void },
+  ) => {
+    middlewares.use((req, _res, next) => {
+      const nextUrl = rewriteHelpUrl(req.url);
+      if (nextUrl && nextUrl !== req.url) req.url = nextUrl;
+      next();
+    });
+  };
+
+  return {
+    name: "help-page-route",
+    configureServer(server: { middlewares: Parameters<typeof install>[0] }) {
+      install(server.middlewares);
+    },
+    configurePreviewServer(server: { middlewares: Parameters<typeof install>[0] }) {
+      install(server.middlewares);
+    },
+  };
+}
+
+/** Swap dev /src CSS links in help/index.html for hashed production assets from index.html. */
+function helpPageStylesPlugin() {
+  const styleMarkerStart = "<!-- HELP_PAGE_STYLES -->";
+  const styleMarkerEnd = "<!-- /HELP_PAGE_STYLES -->";
+
+  return {
+    name: "help-page-styles",
+    closeBundle() {
+      const distDir = path.resolve(webRoot, "dist");
+      const mainIndexPath = path.join(distDir, "index.html");
+      const helpIndexPath = path.join(distDir, "help", "index.html");
+      if (!fs.existsSync(mainIndexPath) || !fs.existsSync(helpIndexPath)) return;
+
+      const mainHtml = fs.readFileSync(mainIndexPath, "utf8");
+      let helpHtml = fs.readFileSync(helpIndexPath, "utf8");
+
+      const stylesheetLinks = [...mainHtml.matchAll(/<link[^>]+rel="stylesheet"[^>]*>/g)].map(
+        (match) => match[0],
+      );
+      if (!stylesheetLinks.length) return;
+
+      const start = helpHtml.indexOf(styleMarkerStart);
+      const end = helpHtml.indexOf(styleMarkerEnd);
+      if (start === -1 || end === -1) return;
+
+      const replacement = `${styleMarkerStart}\n  ${stylesheetLinks.join("\n  ")}\n  ${styleMarkerEnd}`;
+      helpHtml =
+        helpHtml.slice(0, start) + replacement + helpHtml.slice(end + styleMarkerEnd.length);
+      fs.writeFileSync(helpIndexPath, helpHtml, "utf8");
+    },
+  };
+}
+
 export default defineConfig({
+  plugins: [helpPageRoutePlugin(), helpPageStylesPlugin()],
   resolve: {
     alias: {
       // Ensure browser voice session setup (mic/worklet/WebSocket) is registered in prod builds.

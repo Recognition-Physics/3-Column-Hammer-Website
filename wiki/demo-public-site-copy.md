@@ -254,7 +254,11 @@ Take the Challenge
 
 ## rt_home_voice_cta
 
-Ask our AI about products
+Ask our voice AI about Hammer
+
+## rt_product_drive_tagline
+
+Answers every lead instantly, follows up until they book.
 
 ## rt_listen_label
 

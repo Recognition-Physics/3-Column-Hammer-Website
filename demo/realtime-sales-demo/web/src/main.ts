@@ -63,6 +63,61 @@ const SIGN_IN_URL: string =
     .VITE_SIGN_IN_URL?.trim() ||
   "https://www2.hammer-corp.com/session/new?continue=https%3A%2F%2Fdashboard.hammer-corp.com%2F";
 
+/** HubSpot support form — footer "Contact Support" panel. Override region: `VITE_HUBSPOT_FORM_REGION`. */
+const HUBSPOT_PORTAL_ID = "3355079";
+const HUBSPOT_SUPPORT_FORM_ID = "7113d858-622b-4df3-a6f3-4ecc5b7c0c36";
+const HUBSPOT_FORM_REGION =
+  (import.meta as ImportMeta & { env: Record<string, string | undefined> }).env
+    .VITE_HUBSPOT_FORM_REGION?.trim() || "na1";
+
+type HubSpotFormsApi = {
+  forms: {
+    create: (opts: {
+      region: string;
+      portalId: string;
+      formId: string;
+      target: string;
+    }) => void;
+  };
+};
+
+let hubspotFormsScriptPromise: Promise<HubSpotFormsApi> | null = null;
+
+function loadHubSpotForms(): Promise<HubSpotFormsApi> {
+  const w = window as Window & { hbspt?: HubSpotFormsApi };
+  if (w.hbspt?.forms) return Promise.resolve(w.hbspt);
+  if (hubspotFormsScriptPromise) return hubspotFormsScriptPromise;
+  hubspotFormsScriptPromise = new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = "https://js.hsforms.net/forms/embed/v2.js";
+    s.charset = "utf-8";
+    s.async = true;
+    s.onload = () => {
+      if (w.hbspt?.forms) resolve(w.hbspt);
+      else reject(new Error("HubSpot forms API unavailable"));
+    };
+    s.onerror = () => reject(new Error("Could not load HubSpot forms"));
+    document.head.appendChild(s);
+  });
+  return hubspotFormsScriptPromise;
+}
+
+async function mountHubSpotSupportForm(container: HTMLElement | null): Promise<void> {
+  if (!container || container.dataset.mounted === "1") return;
+  try {
+    const hbspt = await loadHubSpotForms();
+    hbspt.forms.create({
+      region: HUBSPOT_FORM_REGION,
+      portalId: HUBSPOT_PORTAL_ID,
+      formId: HUBSPOT_SUPPORT_FORM_ID,
+      target: "#hubspotSupportForm",
+    });
+    container.dataset.mounted = "1";
+  } catch (err) {
+    console.error("[hubspot support form]", err);
+  }
+}
+
 /** Phone-first landing CTA (same locally and on hammer-finalsite). Browser WebRTC only when `VITE_ENABLE_BROWSER_VOICE=1`. */
 const BROWSER_VOICE_ENABLED = envTruthy(
   (import.meta as ImportMeta & { env: Record<string, string | undefined> }).env
@@ -909,9 +964,32 @@ let voiceSessionAnchoredInNavPanel = false;
 let voiceSessionAnchoredInFooter = false;
 /** Bumped on endCall so an in-flight startCall cannot go live after the panel is dismissed. */
 let voiceCallEpoch = 0;
-type NavPanelId = "reviews" | "faq" | "terms" | "privacy";
+type NavPanelId = "reviews" | "faq" | "terms" | "privacy" | "support";
+
+function isLegalNavPanel(panel: NavPanelId | null): boolean {
+  return panel === "terms" || panel === "privacy" || panel === "support";
+}
+
+const NAV_PANEL_SECTION_IDS: Record<NavPanelId, string> = {
+  reviews: "navPanelReviews",
+  faq: "navPanelFaq",
+  terms: "navPanelTerms",
+  privacy: "navPanelPrivacy",
+  support: "navPanelSupport",
+};
 
 function initialOpenNavPanel(): NavPanelId | null {
+  if (typeof window === "undefined") return null;
+  const panel = new URLSearchParams(window.location.search).get("panel");
+  if (
+    panel === "reviews" ||
+    panel === "faq" ||
+    panel === "terms" ||
+    panel === "privacy" ||
+    panel === "support"
+  ) {
+    return panel;
+  }
   return null;
 }
 
@@ -959,9 +1037,20 @@ function navPanelTitle(panel: NavPanelId): string {
     faq: ["rt_nav_faq", "FAQ"],
     terms: ["rt_site_footer_terms", "Terms of Service"],
     privacy: ["rt_site_footer_privacy", "Privacy Policy"],
+    support: ["rt_site_footer_support", "Contact Support"],
   };
   const [key, fallback] = keys[panel];
   return copy(key, fallback);
+}
+
+function navPanelAriaLabel(panel: NavPanelId | null): string {
+  if (panel === "terms" || panel === "privacy") {
+    return copy("rt_footer_legal_panel_aria", "Legal information");
+  }
+  if (panel === "support") {
+    return copy("rt_site_footer_support_aria", "Contact support");
+  }
+  return copy("rt_nav_panel_aria", "Navigation panel");
 }
 
 type SiteCopy = Record<string, string>;
@@ -1120,7 +1209,7 @@ const PRODUCT_COL_SPECS: ProductColSpec[] = [
     nameKey: "rt_product_drive_name",
     nameFallback: "Hammer Drive",
     taglineKey: "rt_product_drive_tagline",
-    taglineFallback: "Texts internet leads fast. Books visits in your CRM.",
+    taglineFallback: "Answers every lead instantly, follows up until they book.",
     priceKey: "rt_product_drive_price",
     priceFallback: "From $299/mo",
     bullets: [
@@ -1329,7 +1418,7 @@ function renderHomeHeroHtml(): string {
 }
 
 function renderFooterCtaHtml(live: boolean, connecting: boolean): string {
-  const ctaLabel = copy("rt_home_voice_cta", "Ask our AI about products");
+  const ctaLabel = copy("rt_home_voice_cta", "Ask our voice AI about Hammer");
   if (NAV_PANEL_VOICE_ENABLED) {
     return `<button type="button"
               id="footerCtaVoice"
@@ -1345,7 +1434,7 @@ function renderFooterCtaHtml(live: boolean, connecting: boolean): string {
     return `<button type="button" class="footer-cta__pill footer-cta__pill--phone" id="footerCtaVoice"
               aria-label="${escapeHtml(copy("rt_call_aria_phone", "Call Hannah on your phone"))}" aria-haspopup="dialog">
               <span class="footer-cta__pill-wave footer-cta__pill-wave--phone" aria-hidden="true">${iconLandingCtaPhone}</span>
-              <span class="footer-cta__pill-label">${escapeHtml(copy("rt_home_voice_cta", "Ask our AI about products"))}</span>
+              <span class="footer-cta__pill-label">${escapeHtml(copy("rt_home_voice_cta", "Ask our voice AI about Hammer"))}</span>
             </button>`;
   }
   return `<button type="button" class="footer-cta__pill" data-action="open-sign-up" aria-label="${escapeHtml(copy("rt_nav_sign_up_aria", "Sign up for Hammer"))}">
@@ -1985,7 +2074,7 @@ function mount() {
 
     const connecting = uiState === "connecting";
     const live = uiState === "live";
-    const ctaLabel = copy("rt_home_voice_cta", "Ask our AI about products");
+    const ctaLabel = copy("rt_home_voice_cta", "Ask our voice AI about Hammer");
     const endLabel = copy("rt_call_aria_end", "End call");
     const connectingLabel = copy("rt_call_aria_connecting", "Connecting…");
 
@@ -2014,6 +2103,11 @@ function mount() {
       patchFooterVoiceCtaUi();
       return;
     }
+    if (isLandingHomeLayout()) {
+      patchLandingHomeVoiceUi();
+      patchCallMeModalUi();
+      return;
+    }
     render();
   }
 
@@ -2028,6 +2122,10 @@ function mount() {
     }
     if (usesInlineFooterVoiceUi()) {
       patchFooterVoiceCtaUi();
+      return;
+    }
+    if (isLandingHomeLayout()) {
+      patchLandingHomeVoiceUi();
       return;
     }
     render();
@@ -2193,20 +2291,20 @@ function mount() {
       ev.preventDefault();
       callMeModalOpen = false;
       document.body.style.overflow = "";
-      render();
+      patchOverlayUi();
       return;
     }
     if (leadModalOpen && ev.key === "Escape") {
       ev.preventDefault();
       leadModalOpen = false;
       document.body.style.overflow = "";
-      render();
+      patchOverlayUi();
       return;
     }
     if (mobileNavMenuOpen && !openNavPanel && ev.key === "Escape") {
       ev.preventDefault();
       mobileNavMenuOpen = false;
-      render();
+      patchOverlayUi();
       return;
     }
     if (!openNavPanel) return;
@@ -2230,13 +2328,13 @@ function mount() {
   function closeNavPanel() {
     openNavPanel = null;
     mobileNavMenuOpen = false;
-    if (!stopNavPanelVoiceOnDismiss()) render();
+    if (!stopNavPanelVoiceOnDismiss()) patchOverlayUi();
   }
 
   function closeMobileNavMenu() {
     if (!mobileNavMenuOpen) return;
     mobileNavMenuOpen = false;
-    render();
+    patchOverlayUi();
   }
 
   function wireLeadModal() {
@@ -2244,7 +2342,7 @@ function mount() {
       if (!leadModalOpen) return;
       leadModalOpen = false;
       document.body.style.overflow = "";
-      render();
+      patchOverlayUi();
     };
     root.querySelectorAll<HTMLElement>("[data-lead-close]").forEach((el) => {
       el.addEventListener("click", close);
@@ -2288,7 +2386,7 @@ function mount() {
         leadModalOpen = false;
         document.body.style.overflow = "";
         form.reset();
-        window.setTimeout(() => render(), 600);
+        window.setTimeout(() => patchOverlayUi(), 600);
       } catch (err) {
         console.error("[lead form]", err);
         const msg =
@@ -2310,12 +2408,13 @@ function mount() {
   }
 
   function wireTryButtons() {
-    const openSignUpModal = () => {
+    const openSignUpModal = (e?: Event) => {
+      e?.preventDefault();
       openNavPanel = null;
       callMeModalOpen = false;
       leadModalOpen = true;
       document.body.style.overflow = "hidden";
-      if (!stopNavPanelVoiceOnDismiss()) render();
+      if (!stopNavPanelVoiceOnDismiss()) patchOverlayUi();
     };
     root.querySelectorAll("[data-action='open-sign-up']").forEach((el) => {
       el.addEventListener("click", openSignUpModal);
@@ -2336,7 +2435,8 @@ function mount() {
       });
     }
     if (outboundCallMePrimary()) {
-      root.querySelector("#footerPrimary")?.addEventListener("click", () => {
+      root.querySelector("#footerPrimary")?.addEventListener("click", (e) => {
+        e.preventDefault();
         leadModalOpen = false;
         if (outboundCallUi !== "calling") {
           outboundCallUi = "idle";
@@ -2344,7 +2444,7 @@ function mount() {
         }
         callMeModalOpen = true;
         document.body.style.overflow = "hidden";
-        render();
+        patchOverlayUi();
       });
     } else if (BROWSER_VOICE_ENABLED) {
       root.querySelector("#footerPrimary")?.addEventListener("click", (e) => {
@@ -2376,7 +2476,7 @@ function mount() {
       if (!callMeModalOpen) return;
       callMeModalOpen = false;
       document.body.style.overflow = "";
-      render();
+      patchOverlayUi();
     };
     root.querySelectorAll<HTMLElement>("[data-call-me-close]").forEach((el) => {
       el.addEventListener("click", close);
@@ -2419,6 +2519,221 @@ function mount() {
       requestAnimationFrame(() => {
         root.querySelector<HTMLElement>("#callMePhone")?.focus();
       });
+    }
+  }
+
+  function isLandingHomeLayout(): boolean {
+    return !!root.querySelector(".landing-hero--home");
+  }
+
+  function patchOverlayUi(): void {
+    const navLayer = root.querySelector<HTMLElement>(".nav-panel-layer");
+    if (navLayer) {
+      const open = openNavPanel !== null;
+      navLayer.classList.toggle("is-open", open);
+      if (open) {
+        navLayer.removeAttribute("hidden");
+        navLayer.setAttribute("aria-hidden", "false");
+      } else {
+        navLayer.setAttribute("hidden", "");
+        navLayer.setAttribute("aria-hidden", "true");
+      }
+    }
+
+    const navPanel = root.querySelector<HTMLElement>(".nav-panel");
+    if (navPanel) {
+      navPanel.setAttribute("aria-label", navPanelAriaLabel(openNavPanel));
+    }
+
+    const kicker = root.querySelector<HTMLElement>(".nav-panel__kicker");
+    if (kicker) {
+      kicker.hidden = !openNavPanel || isLegalNavPanel(openNavPanel);
+    }
+
+    const titleEl = root.querySelector<HTMLElement>(".nav-panel__h");
+    if (titleEl) {
+      titleEl.textContent = openNavPanel ? navPanelTitle(openNavPanel) : "";
+    }
+
+    for (const [panelId, elementId] of Object.entries(NAV_PANEL_SECTION_IDS) as [NavPanelId, string][]) {
+      root
+        .querySelector<HTMLElement>(`#${elementId}`)
+        ?.classList.toggle("is-active", openNavPanel === panelId);
+    }
+
+    const navFoot = root.querySelector<HTMLElement>(".nav-panel__foot");
+    if (navFoot) {
+      navFoot.hidden = !openNavPanel || isLegalNavPanel(openNavPanel);
+    }
+
+    root.querySelectorAll<HTMLButtonElement>("button[data-panel]").forEach((btn) => {
+      const panel = btn.dataset.panel as NavPanelId | undefined;
+      const active = !!panel && openNavPanel === panel;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-expanded", active ? "true" : "false");
+    });
+
+    const leadLayer = root.querySelector<HTMLElement>(".lead-modal-layer:not(.call-me-modal-layer)");
+    if (leadLayer) {
+      leadLayer.classList.toggle("is-open", leadModalOpen);
+      leadLayer.setAttribute("aria-hidden", leadModalOpen ? "false" : "true");
+    }
+
+    const callMeLayer = root.querySelector<HTMLElement>(".call-me-modal-layer");
+    if (callMeLayer) {
+      callMeLayer.classList.toggle("is-open", callMeModalOpen);
+      callMeLayer.setAttribute("aria-hidden", callMeModalOpen ? "false" : "true");
+    }
+
+    document.body.style.overflow = leadModalOpen || callMeModalOpen ? "hidden" : "";
+
+    const mobileMenu = root.querySelector<HTMLElement>(".chrome-mobile-menu");
+    if (mobileMenu) {
+      mobileMenu.classList.toggle("is-open", mobileNavMenuOpen);
+      if (mobileNavMenuOpen) {
+        mobileMenu.removeAttribute("hidden");
+        mobileMenu.setAttribute("aria-hidden", "false");
+      } else {
+        mobileMenu.setAttribute("hidden", "");
+        mobileMenu.setAttribute("aria-hidden", "true");
+      }
+    }
+
+    const menuToggle = root.querySelector<HTMLButtonElement>("#chromeMenuToggle");
+    if (menuToggle) {
+      menuToggle.classList.toggle("is-open", mobileNavMenuOpen);
+      menuToggle.setAttribute("aria-expanded", mobileNavMenuOpen ? "true" : "false");
+    }
+
+    if (leadModalOpen) {
+      requestAnimationFrame(() => {
+        root.querySelector<HTMLElement>("#leadModalDialog input")?.focus();
+      });
+    } else if (callMeModalOpen) {
+      requestAnimationFrame(() => {
+        root.querySelector<HTMLElement>("#callMePhone")?.focus();
+      });
+    }
+
+    if (openNavPanel === "support") {
+      void mountHubSpotSupportForm(root.querySelector<HTMLElement>("#hubspotSupportForm"));
+    }
+  }
+
+  function patchNavPanelFootVoiceUi(): void {
+    const btn = root.querySelector<HTMLButtonElement>("#navPanelFootVoiceBtn");
+    if (!btn) return;
+
+    const live = uiState === "live";
+    const connecting = uiState === "connecting";
+    const voiceError = voiceSessionAnchoredInNavPanel && uiState === "error";
+    const eyebrowNav = voiceError
+      ? copy("rt_nav_panel_foot_eyebrow_error", "Could not connect")
+      : live
+        ? copy("rt_nav_panel_foot_eyebrow_live", "Voice live")
+        : connecting
+          ? copy("rt_nav_panel_foot_eyebrow_connecting", "Connecting")
+          : copy("rt_nav_panel_foot_tag", "Live voice demo");
+    const hintNav = voiceError
+      ? voiceConnectErrorMessage(errorDetail)
+      : live
+        ? copy(
+            "rt_nav_panel_foot_hint_live",
+            "You're connected. Speak when you're ready. Tap again to end the call.",
+          )
+        : connecting
+          ? copy(
+              "rt_nav_panel_foot_hint_connecting",
+              "Securing your voice session. Allow microphone when prompted.",
+            )
+          : copy(
+              "rt_nav_panel_foot",
+              "Hannah is an AI voice assistant. This session may be recorded and processed. Ask about pricing, integrations, or sign up now.",
+            );
+    const ariaLabelNav = voiceError
+      ? copy("rt_nav_panel_foot_voice_aria_retry", "Retry live voice demo")
+      : live
+        ? copy("rt_call_aria_end", "End call")
+        : connecting
+          ? copy("rt_call_aria_connecting", "Connecting")
+          : copy("rt_nav_panel_foot_voice_aria", "Start live voice demo in this panel");
+
+    btn.classList.toggle("is-voice-live", live);
+    btn.classList.toggle("is-voice-connecting", connecting);
+    btn.classList.toggle("is-voice-error", voiceError);
+    btn.disabled = connecting;
+    btn.setAttribute("aria-label", ariaLabelNav);
+
+    btn.querySelector(".nav-panel__foot-signal")?.classList.toggle("is-live", live);
+    btn.querySelector(".nav-panel__foot-signal")?.classList.toggle("is-connecting", connecting);
+    btn.querySelector(".nav-panel__foot-orbit")?.classList.toggle("is-live", live);
+    btn.querySelector(".nav-panel__foot-orbit")?.classList.toggle("is-connecting", connecting);
+
+    const eyebrow = btn.querySelector(".nav-panel__foot-eyebrow");
+    const hint = btn.querySelector(".nav-panel__foot-hint");
+    if (eyebrow) eyebrow.textContent = eyebrowNav;
+    if (hint) hint.textContent = hintNav;
+    syncNavPanelFootHint(btn);
+  }
+
+  function patchLandingHomeVoiceUi(): void {
+    patchFooterVoiceCtaUi();
+    patchNavPanelFootVoiceUi();
+
+    const live = uiState === "live";
+    const connecting = uiState === "connecting";
+    const activeProduct = live || connecting ? homeProductVoiceFocus : "";
+
+    root.querySelectorAll<HTMLElement>(".product-col[data-voice-product]").forEach((col) => {
+      const isActive = !!activeProduct && col.dataset.voiceProduct === activeProduct;
+      col.classList.toggle("is-voice-session", isActive);
+    });
+
+    if (live || connecting) {
+      focusActiveProductColVoice();
+    }
+  }
+
+  function patchCallMeModalUi(): void {
+    const layer = root.querySelector<HTMLElement>(".call-me-modal-layer");
+    if (!layer) return;
+
+    layer.classList.toggle("is-open", callMeModalOpen);
+    layer.setAttribute("aria-hidden", callMeModalOpen ? "false" : "true");
+
+    const busy = outboundCallUi === "calling";
+    const submitBtn = root.querySelector<HTMLButtonElement>(".call-me-modal__submit");
+    const submitLabel = submitBtn?.querySelector<HTMLElement>(".lead-submit__label");
+    const phoneInput = root.querySelector<HTMLInputElement>("#callMePhone");
+    const consentInput = root.querySelector<HTMLInputElement>("#callMeConsent");
+    const statusEl = root.querySelector<HTMLElement>("#callMeStatus");
+
+    if (submitLabel) {
+      submitLabel.textContent = busy
+        ? copy("rt_call_me_submitting", "Calling…")
+        : copy("rt_call_me_submit", "Call me");
+    }
+    if (submitBtn) {
+      submitBtn.disabled = busy || !outboundConsentChecked || !outboundPhoneDraft.trim();
+    }
+    if (phoneInput) {
+      phoneInput.disabled = busy;
+      if (phoneInput.value !== outboundPhoneDraft) {
+        phoneInput.value = outboundPhoneDraft;
+      }
+    }
+    if (consentInput) {
+      consentInput.disabled = busy;
+      consentInput.checked = outboundConsentChecked;
+    }
+    if (statusEl) {
+      const message = outboundStatusMessage();
+      statusEl.textContent = message;
+      statusEl.classList.remove("is-error", "is-success", "is-pending", "has-message");
+      if (outboundCallUi === "error") statusEl.classList.add("is-error");
+      if (outboundCallUi === "answered") statusEl.classList.add("is-success");
+      if (outboundCallUi === "calling") statusEl.classList.add("is-pending");
+      if (message) statusEl.classList.add("has-message");
     }
   }
 
@@ -2492,24 +2807,16 @@ function mount() {
 
         <div class="nav-panel-layer ${openNavPanel ? "is-open" : ""}" ${openNavPanel ? "" : "hidden"} aria-hidden="${openNavPanel ? "false" : "true"}">
           <div class="nav-panel-backdrop" data-action="close" aria-hidden="true"></div>
-          <section class="nav-panel nav-panel--glass" role="dialog" aria-modal="false" aria-label="${escapeHtml(
-            openNavPanel === "terms" || openNavPanel === "privacy"
-              ? copy("rt_footer_legal_panel_aria", "Legal information")
-              : copy("rt_nav_panel_aria", "Navigation panel"),
-          )}">
+          <section class="nav-panel nav-panel--glass" role="dialog" aria-modal="false" aria-label="${escapeHtml(navPanelAriaLabel(openNavPanel))}">
             <div class="nav-panel__shine" aria-hidden="true"></div>
             <span class="nav-panel__accent" aria-hidden="true"></span>
             <span class="nav-panel__grid" aria-hidden="true"></span>
             <header class="nav-panel__head">
               <div class="nav-panel__title">
-                ${
-                  openNavPanel === "terms" || openNavPanel === "privacy"
-                    ? ""
-                    : `<span class="nav-panel__kicker">
+                <span class="nav-panel__kicker"${!openNavPanel || isLegalNavPanel(openNavPanel) ? " hidden" : ""}>
                   <span class="nav-panel__kicker-dot" aria-hidden="true"></span>
                   ${escapeHtml(copy("rt_nav_panel_kicker", "Quick tour"))}
-                </span>`
-                }
+                </span>
                 <span class="nav-panel__h">${openNavPanel ? escapeHtml(navPanelTitle(openNavPanel)) : ""}</span>
               </div>
               <button type="button" class="nav-panel__close" data-action="close" aria-label="${escapeHtml(copy("rt_nav_close_aria", "Close"))}">
@@ -2589,6 +2896,10 @@ function mount() {
                   </article>
                 </div>
               </div>
+              <div id="navPanelSupport" class="nav-panel__section nav-panel__section--support ${openNavPanel === "support" ? "is-active" : ""}">
+                <p class="nav-panel__lead">${escapeHtml(copy("rt_nav_panel_support_lead", "Tell us how we can help. Our team will get back to you shortly."))}</p>
+                <div id="hubspotSupportForm" class="hubspot-support-form" aria-live="polite"></div>
+              </div>
               <div id="navPanelTerms" class="nav-panel__section ${openNavPanel === "terms" ? "is-active" : ""}">
                 ${hammerTermsFragment}
               </div>
@@ -2625,11 +2936,7 @@ function mount() {
                 </aside>
               </div>
             </div>
-            ${
-              openNavPanel === "terms" || openNavPanel === "privacy"
-                ? ""
-                : renderNavPanelFootHtml(navPanelVoiceLive, navPanelVoiceConnecting, navPanelVoiceError, errorDetail)
-            }
+            ${renderNavPanelFootHtml(navPanelVoiceLive, navPanelVoiceConnecting, navPanelVoiceError, errorDetail)}
           </section>
         </div>
 
@@ -2656,6 +2963,7 @@ function mount() {
             </div>
             <div class="site-footer__reviews">
               ${renderFooterReviewsButton()}
+              <a href="/help" class="chrome__jump" id="footerOpenSupport">${escapeHtml(copy("rt_site_footer_support", "Contact Support"))}</a>
             </div>
           </nav>
         </footer>
@@ -2714,7 +3022,8 @@ function mount() {
       </div>`;
 
     root.querySelectorAll<HTMLButtonElement>("button[data-panel]").forEach((btn) => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
         const panel = btn.dataset.panel as NavPanelId | undefined;
         if (!panel) return;
         leadModalOpen = false;
@@ -2724,10 +3033,10 @@ function mount() {
         mobileNavMenuOpen = false;
         openNavPanel = closingPanel ? null : panel;
         if (closingPanel) {
-          if (!stopNavPanelVoiceOnDismiss()) render();
+          if (!stopNavPanelVoiceOnDismiss()) patchOverlayUi();
         } else {
           if (openNavPanel && NAV_PANEL_VOICE_ENABLED) prewarmVoiceConnect();
-          render();
+          patchOverlayUi();
         }
       });
     });
@@ -2744,9 +3053,10 @@ function mount() {
       el.addEventListener("click", () => closeMobileNavMenu());
     });
 
-    root.querySelector("#chromeMenuToggle")?.addEventListener("click", () => {
+    root.querySelector("#chromeMenuToggle")?.addEventListener("click", (e) => {
+      e.preventDefault();
       mobileNavMenuOpen = !mobileNavMenuOpen;
-      render();
+      patchOverlayUi();
     });
 
     if (BROWSER_VOICE_ENABLED) {
@@ -2778,6 +3088,7 @@ function mount() {
     wireLeadModal();
     voiceUiRefresh = refreshVoiceUi;
     focusActiveProductColVoice();
+    patchOverlayUi();
   }
 
   function focusActiveProductColVoice(): void {

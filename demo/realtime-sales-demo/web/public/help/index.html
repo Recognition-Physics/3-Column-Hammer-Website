@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Support — Hammer</title>
+  <meta name="description" content="Contact Hammer support." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@9..144,400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap"
+    rel="stylesheet"
+  />
+  <!-- HELP_PAGE_STYLES -->
+  <link rel="stylesheet" href="/src/style.css" />
+  <link rel="stylesheet" href="/src/pplx-theme.css" />
+  <link rel="stylesheet" href="/src/landing-hero.css" />
+  <link rel="stylesheet" href="/src/cal-minimal-theme.css" />
+  <link rel="stylesheet" href="/src/landing-responsive.css" />
+  <!-- /HELP_PAGE_STYLES -->
+  <style>
+    html,
+    body {
+      height: auto;
+      min-height: 100dvh;
+      max-height: none;
+      overflow: auto;
+    }
+
+    .help-page.app-shell {
+      overflow: visible;
+      max-height: none;
+      min-height: 100dvh;
+      height: auto;
+    }
+
+    .help-page {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .help-page .site-footer {
+      position: relative;
+      bottom: auto;
+      left: auto;
+      right: auto;
+      flex-shrink: 0;
+      margin-top: auto;
+    }
+
+    .help-main {
+      position: relative;
+      z-index: 5;
+      flex: 1 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      width: 100%;
+      padding: calc(88px + env(safe-area-inset-top, 0px)) clamp(20px, 4vw, 32px)
+        clamp(40px, 6vh, 64px);
+    }
+
+    .help-form-wrap {
+      width: min(100%, 520px);
+      margin: 0 auto;
+      padding-bottom: 16px;
+    }
+
+    #hubspot-form-container {
+      min-height: 120px;
+      padding-bottom: 8px;
+    }
+
+    .form-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 120px;
+    }
+
+    .form-loading__dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--landing-red, #c91e1e);
+      opacity: 0.35;
+      animation: helpDotPulse 1.4s ease-in-out infinite;
+    }
+
+    .form-loading__dot:nth-child(2) { animation-delay: 0.2s; }
+    .form-loading__dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes helpDotPulse {
+      0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); }
+      40% { opacity: 1; transform: scale(1.15); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .form-loading__dot { animation: none; opacity: 0.5; }
+    }
+
+    .help-page .site-footer__reviews .chrome__jump[aria-current="page"] {
+      color: var(--cal-accent, #c91e1e) !important;
+      font-weight: 600;
+      border-color: var(--cal-accent-line, rgba(201, 30, 30, 0.22)) !important;
+      background: var(--cal-accent-soft, rgba(201, 30, 30, 0.07)) !important;
+    }
+
+    #hubspot-form-container .hs-form fieldset { max-width: 100% !important; }
+
+    #hubspot-form-container .hs-form .hs-form-field {
+      margin-bottom: 1.1rem !important;
+    }
+
+    #hubspot-form-container .hs-form .hs-submit {
+      margin-top: 0.5rem !important;
+      padding-bottom: 0.25rem !important;
+    }
+
+    #hubspot-form-container .hs-form .hs-input,
+    #hubspot-form-container .hs-form input[type="text"],
+    #hubspot-form-container .hs-form input[type="email"],
+    #hubspot-form-container .hs-form textarea,
+    #hubspot-form-container .hs-form select {
+      width: 100% !important;
+      border: 1px solid rgba(12, 15, 20, 0.09) !important;
+      border-radius: 10px !important;
+      padding: 10px 14px !important;
+      font-family: var(--font-body) !important;
+      font-size: 0.9375rem !important;
+      color: var(--landing-ink, #0c0f14) !important;
+      background: #fff !important;
+      outline: none !important;
+    }
+
+    #hubspot-form-container .hs-form .hs-input:focus,
+    #hubspot-form-container .hs-form input:focus,
+    #hubspot-form-container .hs-form textarea:focus {
+      border-color: var(--landing-red, #c91e1e) !important;
+      box-shadow: 0 0 0 3px rgba(201, 30, 30, 0.18) !important;
+    }
+
+    #hubspot-form-container .hs-form label {
+      font-family: var(--font-body) !important;
+    }
+
+    #hubspot-form-container .hs-form .hs-button,
+    #hubspot-form-container .hs-form input[type="submit"] {
+      background: linear-gradient(145deg, #f14d4d 0%, #c91e1e 55%, #8f1010 100%) !important;
+      border: none !important;
+      border-radius: 999px !important;
+      color: #fff !important;
+      font-family: var(--font-body) !important;
+      font-size: 0.9375rem !important;
+      font-weight: 600 !important;
+      padding: 12px 28px !important;
+      cursor: pointer !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell app-shell--landing help-page">
+    <div class="underlay underlay--landing" aria-hidden="true">
+      <div class="underlay__base"></div>
+      <div class="underlay__liquid underlay__liquid--a"></div>
+      <div class="underlay__liquid underlay__liquid--b"></div>
+      <div class="underlay__liquid underlay__liquid--c"></div>
+      <div class="underlay__glow"></div>
+    </div>
+
+    <header class="chrome">
+      <a class="chrome__brand-link" href="/" aria-label="Hammer">
+        <span class="logo-img logo-img--hammer" role="img" aria-label="HAMMER"></span>
+      </a>
+      <div class="chrome__actions">
+        <a
+          class="chrome__jump chrome__jump--login"
+          href="https://office.hammer-corp.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >Login</a>
+      </div>
+    </header>
+
+    <main class="help-main">
+      <div class="help-form-wrap">
+        <div id="hubspot-form-container" aria-live="polite">
+          <div class="form-loading" id="form-loading" aria-label="Loading contact form">
+            <div class="form-loading__dot"></div>
+            <div class="form-loading__dot"></div>
+            <div class="form-loading__dot"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+      <nav class="site-footer__nav" aria-label="Legal and account">
+        <div class="site-footer__legal">
+          <a href="/?panel=terms" class="chrome__jump chrome__jump--panel" id="footerOpenTerms">Terms of Service</a>
+          <a href="/?panel=privacy" class="chrome__jump chrome__jump--panel" id="footerOpenPrivacy">Privacy Policy</a>
+        </div>
+        <div class="site-footer__reviews">
+          <a href="/?panel=reviews" class="chrome__jump chrome__jump--panel" id="footerOpenReviews">Reviews</a>
+          <a href="/help" class="chrome__jump" id="footerOpenSupport" aria-current="page">Contact Support</a>
+        </div>
+      </nav>
+    </footer>
+  </div>
+
+  <script charset="utf-8" src="https://js.hsforms.net/forms/embed/v2.js"></script>
+  <script>
+    (function () {
+      function mountForm() {
+        var container = document.getElementById("hubspot-form-container");
+        var loading = document.getElementById("form-loading");
+        if (!container) return;
+        if (loading) loading.remove();
+
+        window.hbspt.forms.create({
+          region: "na1",
+          portalId: "3355079",
+          formId: "7113d858-622b-4df3-a6f3-4ecc5b7c0c36",
+          target: "#hubspot-form-container",
+        });
+      }
+
+      if (window.hbspt && window.hbspt.forms) {
+        mountForm();
+      } else {
+        document.querySelector('script[src*="hsforms"]').addEventListener("load", function () {
+          if (window.hbspt && window.hbspt.forms) mountForm();
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
