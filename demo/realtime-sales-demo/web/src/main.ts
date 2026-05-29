@@ -1135,7 +1135,7 @@ const PRODUCT_COL_SPECS: ProductColSpec[] = [
     slug: "Facebook AIA",
     modifier: "aia",
     nameKey: "rt_product_aia_name",
-    nameFallback: "Facebook AIA",
+    nameFallback: "Facebook Ads",
     taglineKey: "rt_product_aia_tagline",
     taglineFallback: "Runs Facebook and Instagram ads from your lot.",
     priceKey: "rt_product_aia_price",
