@@ -2502,14 +2502,14 @@ function mount() {
             <span class="nav-panel__grid" aria-hidden="true"></span>
             <header class="nav-panel__head">
               <div class="nav-panel__title">
-                <span class="nav-panel__kicker">
+                ${
+                  openNavPanel === "terms" || openNavPanel === "privacy"
+                    ? ""
+                    : `<span class="nav-panel__kicker">
                   <span class="nav-panel__kicker-dot" aria-hidden="true"></span>
-                  ${escapeHtml(
-                    openNavPanel === "terms" || openNavPanel === "privacy"
-                      ? copy("rt_footer_legal_kicker", "Legal")
-                      : copy("rt_nav_panel_kicker", "Quick tour"),
-                  )}
-                </span>
+                  ${escapeHtml(copy("rt_nav_panel_kicker", "Quick tour"))}
+                </span>`
+                }
                 <span class="nav-panel__h">${openNavPanel ? escapeHtml(navPanelTitle(openNavPanel)) : ""}</span>
               </div>
               <button type="button" class="nav-panel__close" data-action="close" aria-label="${escapeHtml(copy("rt_nav_close_aria", "Close"))}">
@@ -2625,7 +2625,11 @@ function mount() {
                 </aside>
               </div>
             </div>
-            ${renderNavPanelFootHtml(navPanelVoiceLive, navPanelVoiceConnecting, navPanelVoiceError, errorDetail)}
+            ${
+              openNavPanel === "terms" || openNavPanel === "privacy"
+                ? ""
+                : renderNavPanelFootHtml(navPanelVoiceLive, navPanelVoiceConnecting, navPanelVoiceError, errorDetail)
+            }
           </section>
         </div>
 
