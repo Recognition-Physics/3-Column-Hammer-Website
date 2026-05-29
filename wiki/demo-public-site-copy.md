@@ -254,11 +254,59 @@ Take the Challenge
 
 ## rt_home_voice_cta
 
-Ask our voice AI about Hammer
+Speak with our voice AI — live
 
 ## rt_product_drive_tagline
 
-Answers every lead instantly, follows up until they book.
+Instantly answers leads from every source, then follows up until they book.
+
+## rt_product_drive_b1
+
+Replies in seconds, day or night.
+
+## rt_product_drive_b2
+
+Follows up for weeks when buyers go quiet.
+
+## rt_product_drive_b3
+
+Books the appointment right in your CRM.
+
+## rt_product_aia_name
+
+Facebook Ads
+
+## rt_product_aia_tagline
+
+Runs Facebook and Instagram ads from your lot.
+
+## rt_product_aia_b1
+
+Your cars are the ads.
+
+## rt_product_aia_b2
+
+Hammer answers every lead.
+
+## rt_product_aia_b3
+
+Shows on Facebook and Instagram together.
+
+## rt_product_mp_tagline
+
+Post your whole lot to Facebook Marketplace in one click.
+
+## rt_product_mp_b1
+
+Never retype price, photos, or VIN.
+
+## rt_product_mp_b2
+
+Select cars and post in bulk.
+
+## rt_product_mp_b3
+
+Auto-reposts so your listings stay on top.
 
 ## rt_listen_label
 

@@ -680,6 +680,17 @@ body:has(.app-shell--landing) {
 
 .footer-cta__pill--voice {
   gap: 0.62rem;
+  transition: opacity 0.15s ease, filter 0.15s ease;
+}
+
+.footer-cta__pill--voice:hover {
+  transform: none;
+  filter: brightness(1.04);
+}
+
+.footer-cta__pill--voice:active {
+  transform: none;
+  filter: brightness(0.98);
 }
 
 .footer-cta__pill--voice.is-connecting {
@@ -688,197 +699,14 @@ body:has(.app-shell--landing) {
 }
 
 .footer-cta__pill--voice.is-live {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.32),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.14),
-    0 8px 28px rgba(201, 30, 30, 0.5),
-    0 18px 44px rgba(12, 20, 40, 0.12);
+  filter: brightness(1.02);
 }
 
-/* Footer voice CTA — mic + sound-wave animation */
-.footer-cta__pill-wave .footer-cta__mic {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
+.footer-cta__pill-wave .footer-cta__mic-glyph {
+  display: block;
+  width: 20px;
+  height: 20px;
   color: rgba(255, 255, 255, 0.96);
-}
-
-.footer-cta__mic-glyph {
-  position: relative;
-  z-index: 2;
-  width: 15px;
-  height: 15px;
-  transform-origin: center bottom;
-  animation: footer-cta-mic-glyph 2.1s ease-in-out infinite;
-}
-
-@keyframes footer-cta-mic-glyph {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-
-  50% {
-    transform: scale(1.07);
-    opacity: 0.9;
-  }
-}
-
-.footer-cta__mic-ring {
-  position: absolute;
-  left: 50%;
-  top: 42%;
-  width: 12px;
-  height: 12px;
-  margin: -6px 0 0 -6px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(255, 255, 255, 0.72);
-  opacity: 0;
-  pointer-events: none;
-  animation: footer-cta-mic-ring 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
-}
-
-.footer-cta__mic-ring--b {
-  animation-delay: 1.2s;
-}
-
-@keyframes footer-cta-mic-ring {
-  0% {
-    transform: scale(0.7);
-    opacity: 0.72;
-  }
-
-  100% {
-    transform: scale(2.35);
-    opacity: 0;
-  }
-}
-
-.footer-cta__mic-wave {
-  position: absolute;
-  top: 50%;
-  width: 3px;
-  height: 9px;
-  margin-top: -6px;
-  border: 1.5px solid currentColor;
-  border-left: none;
-  border-radius: 0 50% 50% 0 / 0 50% 50% 0;
-  opacity: 0;
-  transform-origin: left center;
-  animation: footer-cta-mic-wave 1.8s ease-out infinite;
-}
-
-.footer-cta__mic-wave--l {
-  left: 0;
-  transform: scaleX(-1);
-  animation-name: footer-cta-mic-wave-l;
-  animation-delay: 0.15s;
-}
-
-.footer-cta__mic-wave--r {
-  right: 0;
-  animation-delay: 0.55s;
-}
-
-@keyframes footer-cta-mic-wave {
-  0% {
-    opacity: 0;
-    transform: scale(0.55);
-  }
-
-  25% {
-    opacity: 0.82;
-  }
-
-  100% {
-    opacity: 0;
-    transform: scale(1.15);
-  }
-}
-
-@keyframes footer-cta-mic-wave-l {
-  0% {
-    opacity: 0;
-    transform: scaleX(-1) scale(0.55);
-  }
-
-  25% {
-    opacity: 0.82;
-  }
-
-  100% {
-    opacity: 0;
-    transform: scaleX(-1) scale(1.15);
-  }
-}
-
-.footer-cta__pill--voice.is-connecting .footer-cta__mic-glyph {
-  animation-duration: 0.85s;
-}
-
-.footer-cta__pill--voice.is-connecting .footer-cta__mic-ring {
-  animation-duration: 1.5s;
-}
-
-.footer-cta__pill--voice.is-connecting .footer-cta__mic-wave {
-  animation-duration: 1.1s;
-}
-
-.footer-cta__pill--voice.is-live .footer-cta__mic-glyph {
-  animation: footer-cta-mic-glyph-live 1.6s ease-in-out infinite;
-}
-
-@keyframes footer-cta-mic-glyph-live {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.04);
-  }
-}
-
-.footer-cta__pill--voice.is-live .footer-cta__mic-ring {
-  border-color: rgba(255, 255, 255, 0.88);
-  animation-duration: 1.6s;
-}
-
-.footer-cta__pill--voice.is-live .footer-cta__mic-wave {
-  animation: none;
-  opacity: 0.45;
-}
-
-.footer-cta__pill--voice.is-live.mic-reactive .footer-cta__mic-wave--l {
-  opacity: calc(0.28 + var(--mic-level, 0) * 0.72);
-  transform: scaleX(-1) scaleY(calc(0.55 + var(--mic-level, 0) * 0.95));
-}
-
-.footer-cta__pill--voice.is-live.mic-reactive .footer-cta__mic-wave--r {
-  opacity: calc(0.28 + var(--mic-level, 0) * 0.72);
-  transform: scaleY(calc(0.55 + var(--mic-level, 0) * 0.95));
-}
-
-.footer-cta__pill--voice.is-live.mic-reactive .footer-cta__mic-glyph {
-  animation: none;
-  transform: scale(calc(1 + var(--mic-level, 0) * 0.06));
-  transition: transform 0.12s ease-out;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .footer-cta__mic-glyph,
-  .footer-cta__mic-ring,
-  .footer-cta__mic-wave {
-    animation-duration: 3.6s !important;
-  }
-
-  .footer-cta__pill--voice.is-live.mic-reactive .footer-cta__mic-glyph {
-    transition: none;
-  }
 }
 
 .site-footer {
@@ -8787,6 +8615,39 @@ button.product-col__price:focus-visible {
   font-weight: 600;
   line-height: 1.45;
   color: var(--landing-ink);
+}
+
+/* Keep product column headers + bullet rows aligned across the trio */
+@media (min-width: 720px) {
+  .app-shell--landing .landing-hero--home {
+    --product-col-tagline-lines: 2;
+    --product-col-tagline-min-h: calc(var(--product-col-tagline-lines) * 1.52 * 0.875rem);
+    --product-col-bullet-lines: 2;
+    --product-col-bullet-min-h: calc(1.44rem + var(--product-col-bullet-lines) * 1.45 * 0.9375rem);
+    --product-col-head-min-h: calc(0.35rem + 1.34rem * 1.12 + 0.45rem + var(--product-col-tagline-min-h));
+  }
+
+  .app-shell--landing .landing-hero--home .product-col__head {
+    min-height: var(--product-col-head-min-h);
+    box-sizing: border-box;
+  }
+
+  .app-shell--landing .landing-hero--home .product-col__tagline {
+    min-height: var(--product-col-tagline-min-h);
+  }
+
+  .app-shell--landing .landing-hero--home .product-col__bullet {
+    min-height: var(--product-col-bullet-min-h);
+    box-sizing: border-box;
+  }
+}
+
+@media (min-width: 720px) and (max-width: 960px) {
+  .app-shell--landing .landing-hero--home {
+    --product-col-tagline-lines: 3;
+    --product-col-tagline-min-h: calc(var(--product-col-tagline-lines) * 1.52 * 0.875rem);
+    --product-col-head-min-h: calc(0.35rem + 1.34rem * 1.12 + 0.45rem + var(--product-col-tagline-min-h));
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {

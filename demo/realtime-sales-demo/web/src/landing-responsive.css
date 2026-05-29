@@ -30,11 +30,26 @@
 @media (max-width: 719px) {
   .app-shell.app-shell--landing {
     overflow-x: visible;
+    /* Taller fixed footer when Reviews stacks under Contact Support */
+    --site-footer-block: 7.75rem;
   }
 
   .app-shell--landing .landing-main {
     overflow-x: visible;
-    padding-bottom: calc(var(--site-footer-block, 2.875rem) + 20px + env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+    padding-bottom: calc(var(--site-footer-block) + 16px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .app-shell--landing .footer-cta {
+    flex-shrink: 0;
+    width: 100%;
+    margin-top: clamp(16px, 3vh, 28px);
+    margin-bottom: 8px;
+    padding-inline: 4px;
+  }
+
+  .app-shell--landing .footer-cta__pill {
+    max-width: 100%;
   }
 }
 
@@ -233,6 +248,22 @@
 .app-shell--landing .site-footer__reviews {
   justify-self: end !important;
   grid-column: 2 !important;
+}
+
+@media (max-width: 719px) {
+  .app-shell--landing .site-footer__reviews {
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    gap: 8px !important;
+  }
+
+  .app-shell--landing #footerOpenSupport {
+    order: 1;
+  }
+
+  .app-shell--landing #footerOpenReviews {
+    order: 2;
+  }
 }
 
 /* Short viewports — tighten vertical rhythm so hero + footer fit */
