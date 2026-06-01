@@ -7687,9 +7687,15 @@ footer.site-footer button.site-footer__link {
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  gap: 0.45rem;
   width: 100%;
   margin-top: auto;
   padding-top: 0.55rem;
+}
+
+.product-col__foot .product-col__price {
+  margin: 0;
+  width: 100%;
 }
 
 .product-col__feats-panel .product-col__price {
@@ -8310,8 +8316,8 @@ button.product-col__price:focus-visible {
 .app-shell--landing .landing-hero--home {
   width: min(1240px, 100%);
   max-width: min(1240px, 100%);
-  gap: clamp(28px, 4vh, 40px);
-  padding-top: clamp(0.5rem, 1.5vh, 1rem);
+  gap: clamp(10px, 1.4vh, 16px);
+  padding-top: clamp(0.25rem, 0.75vh, 0.5rem);
 }
 
 /* Home hero — neutral canvas, no red ambient wash on cards or section */
@@ -8342,14 +8348,34 @@ button.product-col__price:focus-visible {
 }
 
 .app-shell--landing .landing-hero--home .product-col__feats-panel {
+  flex: 0 0 auto;
+  padding: 0.4rem 0.85rem 0.35rem;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.98),
     0 0 0 1px rgba(12, 15, 20, 0.04),
     0 8px 22px rgba(12, 20, 40, 0.06);
 }
 
+.app-shell--landing .landing-hero--home .product-col__feats {
+  flex: 0 0 auto;
+}
+
+.app-shell--landing .landing-hero--home .product-col__bullet {
+  padding: 0.48rem 0;
+}
+
+.app-shell--landing .landing-hero--home .product-col__bullet:first-child {
+  padding-top: 0.2rem;
+}
+
+.app-shell--landing .landing-hero--home .product-col__bullet:last-child {
+  padding-bottom: 0.12rem;
+  border-bottom: none;
+}
+
 .app-shell--landing .landing-hero--home .product-col__price {
-  padding: 0.78rem 1.15rem;
+  min-height: 0;
+  padding: 0.52rem 1rem;
   background: rgba(255, 255, 255, 0.88);
   border: 1px solid rgba(12, 15, 20, 0.07);
   border-radius: 12px;
@@ -8360,12 +8386,10 @@ button.product-col__price:focus-visible {
   overflow: visible;
 }
 
-.app-shell--landing .landing-hero--home .product-col__feats-panel .product-col__price {
-  border-radius: 0 0 13px 13px;
-  border-left: none;
-  border-right: none;
-  border-bottom: none;
-  padding-bottom: 0.82rem;
+.app-shell--landing .landing-hero--home .product-col__foot .product-col__price {
+  margin: 0;
+  width: 100%;
+  padding: 0.5rem 0.85rem;
 }
 
 .app-shell--landing .landing-hero--home .product-col__price::before {
@@ -8381,8 +8405,21 @@ button.product-col__price:focus-visible {
     0 6px 18px rgba(12, 20, 40, 0.08);
 }
 
+.app-shell--landing .landing-hero--home .product-col__head {
+  gap: 0.35rem;
+  padding-top: 0.15rem;
+}
+
 .app-shell--landing .landing-hero--home .product-col__foot {
-  padding-top: 0.65rem;
+  flex: 0 0 auto;
+  margin-top: auto;
+  gap: 0.4rem;
+  padding-top: 0;
+}
+
+.app-shell--landing .landing-hero--home .product-col__signup {
+  min-height: 2.5rem;
+  padding: 0.55rem 1.1rem;
 }
 
 .landing-home__intro {
@@ -8551,14 +8588,19 @@ button.product-col__price:focus-visible {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(22px, 3vh, 34px);
+  flex: 1 1 auto;
+  min-height: 0;
+  gap: clamp(8px, 1vh, 12px);
   width: 100%;
   max-width: min(1200px, 100%);
-  padding: clamp(0.25rem, 1vh, 0.5rem) 0;
+  padding: 0;
 }
 
 .landing-home__products-kicker {
   margin: 0;
+  align-self: center;
+  width: 100%;
+  text-align: center;
   font-family: var(--font-body);
   font-size: 0.6875rem;
   font-weight: 650;
@@ -8586,15 +8628,29 @@ button.product-col__price:focus-visible {
   width: 100%;
   max-width: min(1160px, 100%);
   gap: clamp(16px, 2.2vw, 24px);
-  align-items: stretch;
 }
 
-.app-shell--landing .landing-hero--home .product-col {
-  min-height: clamp(24rem, 46vh, 30rem);
+@media (min-width: 720px) {
+  .app-shell--landing .landing-hero--home .product-columns {
+    align-items: stretch;
+    flex: 0 0 auto;
+    height: auto;
+  }
+
+  .app-shell--landing .landing-hero--home .product-col {
+    height: auto;
+  }
+
+  .app-shell--landing .landing-hero--home .product-col__surface {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+  }
 }
 
 .app-shell--landing .landing-hero--home .product-col__surface {
-  padding: clamp(1.45rem, 2.4vw, 1.85rem);
+  gap: 0.65rem;
+  padding: clamp(1.1rem, 1.8vw, 1.45rem);
 }
 
 .app-shell--landing .landing-hero--home .product-col__name {
@@ -8622,8 +8678,8 @@ button.product-col__price:focus-visible {
   .app-shell--landing .landing-hero--home {
     --product-col-tagline-lines: 2;
     --product-col-tagline-min-h: calc(var(--product-col-tagline-lines) * 1.52 * 0.875rem);
-    --product-col-bullet-lines: 2;
-    --product-col-bullet-min-h: calc(1.44rem + var(--product-col-bullet-lines) * 1.45 * 0.9375rem);
+    --product-col-bullet-lines: 1;
+    --product-col-bullet-min-h: calc(1.35rem + var(--product-col-bullet-lines) * 1.45 * 0.9375rem);
     --product-col-head-min-h: calc(0.35rem + 1.34rem * 1.12 + 0.45rem + var(--product-col-tagline-min-h));
   }
 

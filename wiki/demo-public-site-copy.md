@@ -260,6 +260,10 @@ Speak with our voice AI — live
 
 Instantly answers leads from every source, then follows up until they book.
 
+## rt_product_drive_price
+
+Varies by lot size
+
 ## rt_product_drive_b1
 
 Replies in seconds, day or night.
@@ -292,6 +296,10 @@ Hammer answers every lead.
 
 Shows on Facebook and Instagram together.
 
+## rt_product_aia_price
+
+$299/mo + ad spend
+
 ## rt_product_mp_tagline
 
 Post your whole lot to Facebook Marketplace in one click.
@@ -307,6 +315,10 @@ Select cars and post in bulk.
 ## rt_product_mp_b3
 
 Auto-reposts so your listings stay on top.
+
+## rt_product_mp_price
+
+From $199/mo
 
 ## rt_listen_label
 

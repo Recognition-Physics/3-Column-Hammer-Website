@@ -1168,6 +1168,22 @@ function renderProductColBullet(key: string, fallback: string): string {
             </li>`;
 }
 
+function renderProductColPrice(key: string, fallback: string, productName: string): string {
+  const text = copy(key, fallback).trim();
+  const ariaLabel = copy("rt_product_price_sign_up_aria", "Sign up for {product} — {price}")
+    .replace("{product}", productName)
+    .replace("{price}", text);
+  const actionAttrs = `type="button" class="product-col__price" data-action="open-sign-up" data-product="${escapeHtml(productName)}" aria-label="${escapeHtml(ariaLabel)}"`;
+  const fromMatch = text.match(/^From\s+(.+)$/i);
+  if (fromMatch) {
+    return `<button ${actionAttrs}>
+              <span class="product-col__price-prefix">From</span>
+              <span class="product-col__price-amount">${escapeHtml(fromMatch[1])}</span>
+            </button>`;
+  }
+  return `<button ${actionAttrs}><span class="product-col__price-amount">${escapeHtml(text)}</span></button>`;
+}
+
 type ProductColSpec = {
   slug: string;
   modifier: "drive" | "aia" | "marketposter";
@@ -1175,6 +1191,8 @@ type ProductColSpec = {
   nameFallback: string;
   taglineKey: string;
   taglineFallback: string;
+  priceKey?: string;
+  priceFallback?: string;
   bullets: { key: string; fallback: string }[];
   voiceAriaKey: string;
   voiceAriaFallback: string;
@@ -1188,6 +1206,8 @@ const PRODUCT_COL_SPECS: ProductColSpec[] = [
     nameFallback: "Hammer Drive",
     taglineKey: "rt_product_drive_tagline",
     taglineFallback: "Instantly answers leads from every source, then follows up until they book.",
+    priceKey: "rt_product_drive_price",
+    priceFallback: "Varies by lot size",
     bullets: [
       { key: "rt_product_drive_b1", fallback: "Replies in seconds, day or night." },
       { key: "rt_product_drive_b2", fallback: "Follows up for weeks when buyers go quiet." },
@@ -1203,6 +1223,8 @@ const PRODUCT_COL_SPECS: ProductColSpec[] = [
     nameFallback: "Facebook Ads",
     taglineKey: "rt_product_aia_tagline",
     taglineFallback: "Runs Facebook and Instagram ads from your lot.",
+    priceKey: "rt_product_aia_price",
+    priceFallback: "$299/mo + ad spend",
     bullets: [
       { key: "rt_product_aia_b1", fallback: "Your cars are the ads." },
       { key: "rt_product_aia_b2", fallback: "Hammer answers every lead." },
@@ -1218,6 +1240,8 @@ const PRODUCT_COL_SPECS: ProductColSpec[] = [
     nameFallback: "MarketPoster",
     taglineKey: "rt_product_mp_tagline",
     taglineFallback: "Post your whole lot to Facebook Marketplace in one click.",
+    priceKey: "rt_product_mp_price",
+    priceFallback: "From $199/mo",
     bullets: [
       { key: "rt_product_mp_b1", fallback: "Never retype price, photos, or VIN." },
       { key: "rt_product_mp_b2", fallback: "Select cars and post in bulk." },
@@ -1243,6 +1267,7 @@ function renderProductColCard(spec: ProductColSpec, live: boolean, connecting: b
                   </ul>
                 </div>
                 <footer class="product-col__foot">
+                  ${spec.priceKey && spec.priceFallback ? renderProductColPrice(spec.priceKey, spec.priceFallback, name) : ""}
                   <button type="button" class="product-col__signup" data-action="open-sign-up"
                     data-product="${escapeHtml(name)}"
                     aria-label="${escapeHtml(copy("rt_nav_sign_up_aria", "Sign up for Hammer"))}">
