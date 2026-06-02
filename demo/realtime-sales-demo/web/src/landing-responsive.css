@@ -1027,7 +1027,7 @@
 
   .app-shell--landing .footer-cta {
     flex-shrink: 0 !important;
-    margin: clamp(6px, 0.85vh, 12px) auto 0 !important;
+    margin: 0 auto clamp(24px, 5vh, 64px) !important;
   }
 
   .app-shell--landing .footer-cta__pill {

@@ -61,7 +61,7 @@ const REALTIME_PLAYGROUND_PARITY = envTruthy(
 const SIGN_IN_URL: string =
   (import.meta as ImportMeta & { env: Record<string, string | undefined> }).env
     .VITE_SIGN_IN_URL?.trim() ||
-  "https://www2.hammer-corp.com/session/new?continue=https%3A%2F%2Foffice.hammer-corp.com%2F";
+  "https://www2.hammer-corp.com/session/new";
 
 /** HubSpot support form — footer "Contact Support" panel. Override region: `VITE_HUBSPOT_FORM_REGION`. */
 const HUBSPOT_PORTAL_ID = "3355079";
@@ -1174,14 +1174,26 @@ function renderProductColPrice(key: string, fallback: string, productName: strin
     .replace("{product}", productName)
     .replace("{price}", text);
   const actionAttrs = `type="button" class="product-col__price" data-action="open-sign-up" data-product="${escapeHtml(productName)}" aria-label="${escapeHtml(ariaLabel)}"`;
-  const fromMatch = text.match(/^From\s+(.+)$/i);
-  if (fromMatch) {
+
+  const prefixMatch = text.match(/^From\s+(.+)$/i);
+  const prefix = prefixMatch ? "From" : "";
+  const rest = prefixMatch ? prefixMatch[1].trim() : text;
+
+  // Split a real dollar figure ("$299/mo") from any trailing qualifier ("+ ad spend")
+  // so the amount stays the anchor and the qualifier reads as a quiet note.
+  const amountMatch = rest.match(/^(\$[\d,]+(?:\.\d+)?(?:\s*\/\s*mo)?)\s*(.*)$/i);
+  if (amountMatch) {
+    const amount = amountMatch[1].replace(/\s*\/\s*mo/i, "/mo");
+    const note = amountMatch[2].trim();
     return `<button ${actionAttrs}>
-              <span class="product-col__price-prefix">From</span>
-              <span class="product-col__price-amount">${escapeHtml(fromMatch[1])}</span>
+              ${prefix ? `<span class="product-col__price-prefix">${escapeHtml(prefix)}</span>` : ""}
+              <span class="product-col__price-amount">${escapeHtml(amount)}</span>
+              ${note ? `<span class="product-col__price-note">${escapeHtml(note)}</span>` : ""}
             </button>`;
   }
-  return `<button ${actionAttrs}><span class="product-col__price-amount">${escapeHtml(text)}</span></button>`;
+
+  // Non-numeric pricing ("Varies by lot size") reads as a label, not a heavy figure.
+  return `<button ${actionAttrs}><span class="product-col__price-label">${escapeHtml(text)}</span></button>`;
 }
 
 type ProductColSpec = {
@@ -1415,7 +1427,7 @@ function renderHomeHeroHtml(): string {
 }
 
 function renderFooterCtaHtml(live: boolean, connecting: boolean): string {
-  const ctaLabel = copy("rt_home_voice_cta", "Speak with our voice AI — live");
+  const ctaLabel = copy("rt_home_voice_cta", "Talk to Hannah, our voice AI");
   if (NAV_PANEL_VOICE_ENABLED) {
     return `<button type="button"
               id="footerCtaVoice"
@@ -1431,7 +1443,7 @@ function renderFooterCtaHtml(live: boolean, connecting: boolean): string {
     return `<button type="button" class="footer-cta__pill footer-cta__pill--phone" id="footerCtaVoice"
               aria-label="${escapeHtml(copy("rt_call_aria_phone", "Call Hannah on your phone"))}" aria-haspopup="dialog">
               <span class="footer-cta__pill-wave footer-cta__pill-wave--phone" aria-hidden="true">${iconLandingCtaPhone}</span>
-              <span class="footer-cta__pill-label">${escapeHtml(copy("rt_home_voice_cta", "Speak with our voice AI — live"))}</span>
+              <span class="footer-cta__pill-label">${escapeHtml(copy("rt_home_voice_cta", "Talk to Hannah, our voice AI"))}</span>
             </button>`;
   }
   return `<button type="button" class="footer-cta__pill" data-action="open-sign-up" aria-label="${escapeHtml(copy("rt_nav_sign_up_aria", "Sign up for Hammer"))}">
@@ -2068,7 +2080,7 @@ function mount() {
 
     const connecting = uiState === "connecting";
     const live = uiState === "live";
-    const ctaLabel = copy("rt_home_voice_cta", "Speak with our voice AI — live");
+    const ctaLabel = copy("rt_home_voice_cta", "Talk to Hannah, our voice AI");
     const endLabel = copy("rt_call_aria_end", "End call");
     const connectingLabel = copy("rt_call_aria_connecting", "Connecting…");
 

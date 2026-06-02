@@ -254,7 +254,7 @@ Take the Challenge
 
 ## rt_home_voice_cta
 
-Speak with our voice AI — live
+Talk to Hannah, our voice AI
 
 ## rt_product_drive_tagline
 

@@ -580,7 +580,7 @@ body:has(.app-shell--landing) {
   align-items: center;
   width: 100%;
   max-width: min(1240px, 100%);
-  margin: clamp(28px, 4.5vh, 48px) auto 0;
+  margin: clamp(4px, 0.5vh, 8px) auto 0;
   padding: 0;
   background: none;
   border: none;
@@ -7718,9 +7718,10 @@ footer.site-footer button.site-footer__link {
 .product-col__price {
   position: relative;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 0.42rem;
+  gap: 0.12rem 0.42rem;
   width: 100%;
   min-height: 2.75rem;
   margin: 0;
@@ -7780,24 +7781,42 @@ button.product-col__price:focus-visible {
   font-weight: 650;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(12, 15, 20, 0.44);
+  color: rgba(12, 15, 20, 0.6);
 }
 
 .product-col__price-amount {
   font-family: var(--font-display);
-  font-size: clamp(0.9375rem, 1.35vw, 1.0625rem);
-  font-weight: 800;
-  letter-spacing: -0.028em;
+  font-size: clamp(0.875rem, 1.15vw, 0.98rem);
+  font-weight: 650;
+  letter-spacing: -0.022em;
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
   color: var(--landing-red-dark);
   text-wrap: balance;
 }
 
+.product-col__price-note {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1.1;
+  color: rgba(12, 15, 20, 0.52);
+}
+
+.product-col__price-label {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  line-height: 1.1;
+  color: rgba(12, 15, 20, 0.62);
+}
+
 .product-col__name {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.22rem, 1.85vw, 1.46rem);
+  font-size: clamp(1.3rem, 2vw, 1.56rem);
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.12;
@@ -8606,7 +8625,7 @@ button.product-col__price:focus-visible {
   font-weight: 650;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(12, 15, 20, 0.42);
+  color: rgba(12, 15, 20, 0.58);
   position: relative;
   padding-bottom: 0.65rem;
 }
@@ -8654,7 +8673,7 @@ button.product-col__price:focus-visible {
 }
 
 .app-shell--landing .landing-hero--home .product-col__name {
-  font-size: clamp(1.14rem, 1.75vw, 1.34rem);
+  font-size: clamp(1.24rem, 1.95vw, 1.46rem);
 }
 
 .app-shell--landing .landing-hero--home .product-col__tagline {
