@@ -940,6 +940,44 @@ def site_copy() -> dict:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
+class TrackEventRequest(BaseModel):
+    """Event posted by web/public/openai-tracker.js (page views + form submits)."""
+
+    event: str = Field(..., max_length=50)
+    source_url: str = Field(default="", max_length=2000)
+    email: str = Field(default="", max_length=320)
+    form_id: str = Field(default="", max_length=200)
+
+
+@app.post("/api/track")
+async def track_conversion(
+    payload: TrackEventRequest, request: Request, background_tasks: BackgroundTasks
+) -> dict:
+    """Forward an ad conversion event (page view / form submit) to OpenAI Ads.
+
+    Responds immediately; the event is sent to OpenAI in the background so
+    tracking never slows down or breaks the site.
+    """
+    from openai_ads_tracking import send_conversion_event, tracking_configured
+
+    if not tracking_configured():
+        return {"ok": True, "tracked": False, "reason": "tracking not configured"}
+
+    forwarded = request.headers.get("x-forwarded-for", "")
+    ip_address = forwarded.split(",")[0].strip() if forwarded else (
+        request.client.host if request.client else ""
+    )
+    background_tasks.add_task(
+        send_conversion_event,
+        payload.event,
+        payload.source_url,
+        ip_address,
+        request.headers.get("user-agent", ""),
+        payload.email,
+    )
+    return {"ok": True, "tracked": True}
+
+
 def _require_hammer_local_debug() -> None:
     _require_non_production_debug()
     from hammer_office import hammer_office_debug_mode, hammer_office_runtime_is_deployed
