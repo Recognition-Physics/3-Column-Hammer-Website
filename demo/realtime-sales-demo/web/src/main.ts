@@ -987,6 +987,25 @@ function initialOpenNavPanel(): NavPanelId | null {
   return null;
 }
 
+/**
+ * Reflect the currently open nav panel in the URL via the `panel` query param,
+ * without reloading or otherwise changing the view. Mirrors initialOpenNavPanel()
+ * so a shared/refreshed URL reopens the same panel. No-op if the URL already matches.
+ */
+function syncNavPanelUrl(panel: NavPanelId | null): void {
+  if (typeof window === "undefined" || !window.history?.replaceState) return;
+  const url = new URL(window.location.href);
+  if (panel) {
+    url.searchParams.set("panel", panel);
+  } else {
+    url.searchParams.delete("panel");
+  }
+  const next = `${url.pathname}${url.search}${url.hash}`;
+  const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  if (next === current) return;
+  window.history.replaceState(window.history.state, "", next);
+}
+
 let openNavPanel: NavPanelId | null = initialOpenNavPanel();
 let mobileNavMenuOpen = false;
 let leadModalOpen = false;
@@ -2537,6 +2556,7 @@ function mount() {
   }
 
   function patchOverlayUi(): void {
+    syncNavPanelUrl(openNavPanel);
     const navLayer = root.querySelector<HTMLElement>(".nav-panel-layer");
     if (navLayer) {
       const open = openNavPanel !== null;
