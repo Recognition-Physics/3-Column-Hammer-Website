@@ -742,6 +742,7 @@ function readLeadFormPayload(form: HTMLFormElement) {
     name: raw.name?.trim() ?? "",
     phone: raw.phone?.trim() ?? "",
     website: normalizeLeadWebsite(raw.website ?? ""),
+    consent: Boolean(raw.consent),
   };
 }
 
@@ -750,6 +751,9 @@ function validateLeadPayload(payload: ReturnType<typeof readLeadFormPayload>): s
   if (!payload.phone) return copy("rt_lead_err_phone", "Phone is required.");
   if (!payload.website.replace(/^https?:\/\//i, "").trim()) {
     return copy("rt_lead_err_website", "Dealership website is required.");
+  }
+  if (!payload.consent) {
+    return copy("rt_lead_err_consent", "Please agree to be contacted to continue.");
   }
   return null;
 }
@@ -1006,12 +1010,33 @@ function syncNavPanelUrl(panel: NavPanelId | null): void {
   window.history.replaceState(window.history.state, "", next);
 }
 
+/**
+ * Reflect the "Get started" lead modal in the URL via the `modal` query param so the
+ * address bar shows a distinct link while the form is open. Reverts when closed.
+ * Mirrors syncNavPanelUrl(): no reload, no view change, no-op if URL already matches.
+ */
+function syncLeadModalUrl(open: boolean): void {
+  if (typeof window === "undefined" || !window.history?.replaceState) return;
+  const url = new URL(window.location.href);
+  if (open) {
+    url.searchParams.set("modal", "get-started");
+  } else {
+    url.searchParams.delete("modal");
+  }
+  const next = `${url.pathname}${url.search}${url.hash}`;
+  const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  if (next === current) return;
+  window.history.replaceState(window.history.state, "", next);
+}
+
 let openNavPanel: NavPanelId | null = initialOpenNavPanel();
 let mobileNavMenuOpen = false;
 let leadModalOpen = false;
 let callMeModalOpen = false;
 /** Product name from the card Sign Up button that last opened the lead modal (e.g. "Hammer Drive"). */
 let leadModalSourceProduct = "";
+/** Tracks the lead modal contact-consent checkbox so its state survives overlay re-renders. */
+let leadConsentChecked = false;
 
 const CHROME_NAV_SECTIONS: { id: NavPanelId; key: string; fallback: string; controls: string }[] = [];
 
@@ -2375,6 +2400,13 @@ function mount() {
     const submitBtn = form?.querySelector<HTMLButtonElement>(".lead-submit");
     const submitLabel = submitBtn?.querySelector<HTMLElement>(".lead-submit__label");
     const statusEl = form?.querySelector<HTMLElement>("#leadFormStatus");
+    const consentInput = form?.querySelector<HTMLInputElement>("#leadConsent");
+    if (consentInput && submitBtn) {
+      consentInput.addEventListener("change", () => {
+        leadConsentChecked = consentInput.checked;
+        submitBtn.disabled = !leadConsentChecked;
+      });
+    }
     const setLeadStatus = (message: string, kind: "error" | "success" | "") => {
       if (!statusEl) return;
       statusEl.textContent = message;
@@ -2413,6 +2445,7 @@ function mount() {
         leadModalOpen = false;
         document.body.style.overflow = "";
         form.reset();
+        leadConsentChecked = false;
         window.setTimeout(() => patchOverlayUi(), 600);
       } catch (err) {
         console.error("[lead form]", err);
@@ -2557,6 +2590,7 @@ function mount() {
 
   function patchOverlayUi(): void {
     syncNavPanelUrl(openNavPanel);
+    syncLeadModalUrl(leadModalOpen);
     const navLayer = root.querySelector<HTMLElement>(".nav-panel-layer");
     if (navLayer) {
       const open = openNavPanel !== null;
@@ -3027,8 +3061,19 @@ function mount() {
                   placeholder="${escapeHtml(copy("rt_lead_website_ph", "yourdealership.com"))}" aria-required="true"
                   inputmode="url" />
               </label>
+              <label class="call-me-modal__consent lead-modal__consent">
+                <input type="checkbox" class="call-me-modal__checkbox" id="leadConsent" name="consent"
+                  ${leadConsentChecked ? "checked" : ""}
+                  required />
+                <span class="call-me-modal__consent-text">${escapeHtml(copy("rt_lead_consent", "I agree to receive automated marketing & account calls and texts from Hammer at this number. Consent isn't required to buy. Frequency varies; msg & data rates may apply. Reply STOP to cancel, HELP for help."))}</span>
+              </label>
+              <p class="lead-consent-fineprint__links">
+                <a class="lead-consent-fineprint__link" href="?panel=terms" target="_blank" rel="noopener">${escapeHtml(copy("rt_site_footer_terms", "Terms of Service"))}</a>
+                <span class="lead-consent-fineprint__sep" aria-hidden="true">|</span>
+                <a class="lead-consent-fineprint__link" href="?panel=privacy" target="_blank" rel="noopener">${escapeHtml(copy("rt_site_footer_privacy", "Privacy Policy"))}</a>
+              </p>
               <p id="leadFormStatus" class="lead-form-status" role="status" aria-live="polite"></p>
-              <button type="submit" class="lead-submit"><span class="lead-submit__label">${escapeHtml(copy("rt_lead_submit", "Submit"))}</span></button>
+              <button type="submit" class="lead-submit"${leadConsentChecked ? "" : " disabled"}><span class="lead-submit__label">${escapeHtml(copy("rt_lead_submit", "Yes, sign me up!"))}</span></button>
             </form>
             <div class="lead-google-badge">
               <div class="lead-google-badge__row">

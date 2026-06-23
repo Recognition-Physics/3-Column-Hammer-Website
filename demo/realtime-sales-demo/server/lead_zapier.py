@@ -54,6 +54,10 @@ class LeadCaptureRequest(BaseModel):
         default=False,
         description="When true, API returns immediately and delivers to Zapier in the background (voice latency).",
     )
+    consent: bool = Field(
+        default=False,
+        description="Whether the contact affirmatively agreed to be contacted (TCPA/marketing consent at point of capture).",
+    )
 
     @model_validator(mode="after")
     def validate_channel_fields(self) -> LeadCaptureRequest:
@@ -197,6 +201,7 @@ def build_zapier_payload(body: LeadCaptureRequest) -> dict[str, str]:
         "seatCount": (body.seat_count or "").strip(),
         "leadSource": "voice signup" if channel == "voice" else "website form",
         "replyInstruction": "Reply to this email with: I approve",
+        "contactConsent": "yes" if body.consent else "no",
     }
     if body.preferred_callback_time:
         payload["appointmentTime"] = body.preferred_callback_time.strip()
