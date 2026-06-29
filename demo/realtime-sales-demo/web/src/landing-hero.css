@@ -8080,6 +8080,11 @@ button.product-col__price:focus-visible {
   outline-offset: 2px;
 }
 
+.product-col--featured .product-col__signup:focus-visible {
+  outline: 2px solid rgba(201, 30, 30, 0.55);
+  outline-offset: 2px;
+}
+
 .product-col__voice:disabled {
   opacity: 0.42;
   cursor: not-allowed;
@@ -8158,6 +8163,92 @@ button.product-col__price:focus-visible {
 
 .product-col__cta--voice {
   padding-top: 0.85rem;
+}
+
+/* ============================================================
+   Featured product (Hammer Drive) — modern, restrained emphasis.
+   Center placement does most of the work; a quiet lift, a hairline
+   accent, and a small badge set the hierarchy. The CTA is a soft
+   red-tinted glass pill — on-brand and distinct from the plain white
+   buttons, but quiet. No loud red or black fill.
+   ============================================================ */
+.product-col--featured {
+  z-index: 2;
+  transform: translateY(-6px);
+  border-color: rgba(201, 30, 30, 0.22);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.96),
+    0 0 0 1px rgba(201, 30, 30, 0.06),
+    0 18px 40px rgba(12, 20, 40, 0.1);
+}
+
+.product-col--featured:hover {
+  transform: translateY(-9px);
+  border-color: rgba(201, 30, 30, 0.3);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 1),
+    0 0 0 1px rgba(201, 30, 30, 0.1),
+    0 24px 52px rgba(12, 20, 40, 0.13);
+}
+
+/* Reserved on every card so product names align whether badged or not. */
+.product-col__badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 1.4rem;
+  margin-bottom: -0.45rem;
+}
+
+.product-col__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(201, 30, 30, 0.09);
+  color: var(--landing-red-dark);
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.product-col--featured .product-col__signup {
+  border-color: rgba(201, 30, 30, 0.22);
+  background: linear-gradient(180deg, rgba(255, 246, 246, 0.96) 0%, rgba(255, 238, 238, 0.92) 100%);
+  color: var(--landing-red-dark);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 0 0 1px rgba(255, 255, 255, 0.6),
+    0 4px 14px rgba(201, 30, 30, 0.1);
+}
+
+.product-col--featured .product-col__signup::before {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.product-col--featured .product-col__signup:hover:not(:disabled) {
+  background: linear-gradient(180deg, rgba(255, 244, 244, 1) 0%, rgba(255, 232, 232, 0.96) 100%);
+  border-color: rgba(201, 30, 30, 0.32);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 1px rgba(255, 255, 255, 0.7),
+    0 8px 20px rgba(201, 30, 30, 0.16);
+}
+
+.product-col--featured .product-col__signup:active:not(:disabled) {
+  background: linear-gradient(180deg, rgba(255, 240, 240, 1) 0%, rgba(255, 228, 228, 0.97) 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-col--featured,
+  .product-col--featured:hover {
+    transform: none;
+  }
 }
 
 .product-col-voice-dock {
@@ -8427,7 +8518,7 @@ button.product-col__price:focus-visible {
 }
 
 .app-shell--landing .landing-hero--home .product-col__price {
-  min-height: 0;
+  min-height: 3.4rem;
   padding: 0.52rem 1rem;
   background: rgba(255, 255, 255, 0.88);
   border: 1px solid rgba(12, 15, 20, 0.07);

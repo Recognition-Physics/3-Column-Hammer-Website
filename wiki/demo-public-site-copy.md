@@ -260,6 +260,10 @@ Talk to Hannah, our voice AI
 
 Instantly answers leads from every source, then follows up until they book.
 
+## rt_product_drive_badge
+
+Most Popular
+
 ## rt_product_drive_price
 
 Varies by lot size

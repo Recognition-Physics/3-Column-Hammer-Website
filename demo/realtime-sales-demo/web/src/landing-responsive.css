@@ -211,6 +211,34 @@
   }
 }
 
+/* Header sales line collapses to a tap-to-call handset on phones (space next to LOGIN). */
+@media (max-width: 600px) {
+  .app-shell--landing .chrome__sales__prefix,
+  .app-shell--landing .chrome__sales__num {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .app-shell--landing .chrome__sales__icon {
+    display: inline-flex;
+  }
+
+  .app-shell--landing .chrome__sales {
+    padding: 8px 6px;
+  }
+}
+
+/* Footer sales row: hide the handset glyph on phones to keep the label + number clean. */
+@media (max-width: 600px) {
+  .app-shell--landing .site-footer .chrome__sales-foot__icon {
+    display: none;
+  }
+}
+
 .app-shell--landing .chrome {
   min-width: 0;
   overflow-x: clip;
@@ -525,6 +553,15 @@
     max-width: min(26rem, 100%) !important;
     margin-inline: auto !important;
     padding-inline: 0 !important;
+  }
+
+  .app-shell--landing .landing-hero--home .product-col--featured {
+    order: -1 !important;
+    transform: none !important;
+  }
+
+  .app-shell--landing .landing-hero--home .product-col--featured:hover {
+    transform: translateY(-3px) !important;
   }
 
   .app-shell--landing .product-col__name {

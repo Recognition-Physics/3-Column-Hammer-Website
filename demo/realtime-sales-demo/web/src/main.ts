@@ -5,10 +5,24 @@ import "./cal-minimal-theme.css";
 import "./landing-responsive.css";
 import hammerTermsFragment from "./legal/hammer-terms-fragment.html?raw";
 import hammerPrivacyFragment from "./legal/hammer-privacy-fragment.html?raw";
-import { VoiceConversation as Conversation } from "@elevenlabs/client";
+import type { VoiceConversation as Conversation } from "@elevenlabs/client";
 import { installElevenLabsBrowserCompatShims } from "./elevenlabs-browser-compat";
 
 installElevenLabsBrowserCompatShims();
+
+/**
+ * Lazy-load the ElevenLabs voice SDK so it is split out of the critical landing
+ * bundle — it is only needed when a visitor actually starts a voice call, not on
+ * first paint. Cached so repeated calls (prewarm + actual start) share one fetch.
+ */
+let _elevenLabsClientPromise: Promise<typeof import("@elevenlabs/client")> | null =
+  null;
+function loadElevenLabsClient(): Promise<typeof import("@elevenlabs/client")> {
+  if (!_elevenLabsClientPromise) {
+    _elevenLabsClientPromise = import("@elevenlabs/client");
+  }
+  return _elevenLabsClientPromise;
+}
 import {
   startVoiceAudioVisualizer,
   type VoiceVisualizerHandle,
@@ -116,6 +130,21 @@ async function mountHubSpotSupportForm(container: HTMLElement | null): Promise<v
   } catch (err) {
     console.error("[hubspot support form]", err);
   }
+}
+
+/**
+ * Human sales line — a real rep answers this number (no AI/voice bot).
+ * Override display/dial copy via the `rt_sales_phone_*` keys; defaults below.
+ */
+const SALES_PHONE_DISPLAY = "(512) 886-9117";
+const SALES_PHONE_TEL = "+15128869117";
+
+function salesPhone(): { display: string; tel: string; href: string } {
+  const display = copy("rt_sales_phone_display", SALES_PHONE_DISPLAY).trim() || SALES_PHONE_DISPLAY;
+  const tel =
+    (copy("rt_sales_phone_tel", SALES_PHONE_TEL).trim() || SALES_PHONE_TEL).replace(/[^\d+]/g, "") ||
+    SALES_PHONE_TEL;
+  return { display, tel, href: `tel:${tel}` };
 }
 
 /** Phone-first landing CTA (same locally and on hammer-finalsite). Browser WebRTC only when `VITE_ENABLE_BROWSER_VOICE=1`. */
@@ -704,6 +733,9 @@ const iconLandingCtaPhone = `<span class="landing-cta__phone-icon" aria-hidden="
 const iconProductColVoice = `<svg class="product-col__voice-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/><path d="M7 12a5 5 0 0 0 10 0"/><path d="M12 17v4"/></svg>`;
 const iconProductColCheck = `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.25 6.25 4.75 8.75 9.75 3.25"/></svg>`;
 
+/** Handset glyph for the human sales line (header collapse + price/footer affordances). */
+const iconSalesPhone = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3.5h3l1.4 4-2 1.3a12 12 0 0 0 5.6 5.6l1.3-2 4 1.4v3a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.5 5.7 2 2 0 0 1 6.5 3.5z"/></svg>`;
+
 /** Microphone glyph centered inside the nav-panel footer voice signal orb. */
 const iconNavFootMic = `<span class="nav-panel__foot-mic" aria-hidden="true"><svg class="nav-panel__foot-mic-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.25a2.75 2.75 0 0 0-2.75 2.75v7a2.75 2.75 0 0 0 5.5 0v-7A2.75 2.75 0 0 0 12 2.25z"/><path d="M7.5 12a4.5 4.5 0 0 0 9 0"/><path d="M12 18.75v2.25"/><path d="M9 21h6"/></svg></span>`;
 
@@ -1071,6 +1103,18 @@ function renderChromeLoginLink(extraClass = ""): string {
   return `<a class="${cls}" href="${escapeHtml(SIGN_IN_URL)}" target="_blank" rel="noopener noreferrer">${escapeHtml(copy("rt_site_footer_login", "Login"))}</a>`;
 }
 
+/** Header click-to-call to a human rep. Collapses to a tap-to-call handset glyph on phones. */
+function renderChromeSalesPhone(): string {
+  const phone = salesPhone();
+  const prefix = copy("rt_sales_phone_prefix", "Sales");
+  const aria = copy("rt_sales_phone_aria", "Call Hammer sales at {phone}").replace("{phone}", phone.display);
+  return `<a class="chrome__jump chrome__sales" href="${escapeHtml(phone.href)}" data-sales-call="header" aria-label="${escapeHtml(aria)}">
+            <span class="chrome__sales__icon" aria-hidden="true">${iconSalesPhone}</span>
+            <span class="chrome__sales__prefix">${escapeHtml(prefix)}</span>
+            <span class="chrome__sales__num">${escapeHtml(phone.display)}</span>
+          </a>`;
+}
+
 function navPanelTitle(panel: NavPanelId): string {
   const keys: Record<NavPanelId, [string, string]> = {
     reviews: ["rt_nav_reviews", "Reviews"],
@@ -1252,26 +1296,13 @@ type ProductColSpec = {
   bullets: { key: string; fallback: string }[];
   voiceAriaKey: string;
   voiceAriaFallback: string;
+  /** Featured product gets center placement, a badge, and the primary CTA treatment. */
+  featured?: boolean;
+  badgeKey?: string;
+  badgeFallback?: string;
 };
 
 const PRODUCT_COL_SPECS: ProductColSpec[] = [
-  {
-    slug: "Hammer Drive",
-    modifier: "drive",
-    nameKey: "rt_product_drive_name",
-    nameFallback: "Hammer Drive",
-    taglineKey: "rt_product_drive_tagline",
-    taglineFallback: "Instantly answers leads from every source, then follows up until they book.",
-    priceKey: "rt_product_drive_price",
-    priceFallback: "Varies by lot size",
-    bullets: [
-      { key: "rt_product_drive_b1", fallback: "Replies in seconds, day or night." },
-      { key: "rt_product_drive_b2", fallback: "Follows up for weeks when buyers go quiet." },
-      { key: "rt_product_drive_b3", fallback: "Books the appointment right in your CRM." },
-    ],
-    voiceAriaKey: "rt_product_voice_aria_drive",
-    voiceAriaFallback: "Ask Hannah to pitch you on Hammer Drive",
-  },
   {
     slug: "Facebook AIA",
     modifier: "aia",
@@ -1288,6 +1319,26 @@ const PRODUCT_COL_SPECS: ProductColSpec[] = [
     ],
     voiceAriaKey: "rt_product_voice_aria_aia",
     voiceAriaFallback: "Ask Hannah to pitch you on Facebook AIA",
+  },
+  {
+    slug: "Hammer Drive",
+    modifier: "drive",
+    nameKey: "rt_product_drive_name",
+    nameFallback: "Hammer Drive",
+    taglineKey: "rt_product_drive_tagline",
+    taglineFallback: "Instantly answers leads from every source, then follows up until they book.",
+    priceKey: "rt_product_drive_price",
+    priceFallback: "Varies by lot size",
+    bullets: [
+      { key: "rt_product_drive_b1", fallback: "Replies in seconds, day or night." },
+      { key: "rt_product_drive_b2", fallback: "Follows up for weeks when buyers go quiet." },
+      { key: "rt_product_drive_b3", fallback: "Books the appointment right in your CRM." },
+    ],
+    voiceAriaKey: "rt_product_voice_aria_drive",
+    voiceAriaFallback: "Ask Hannah to pitch you on Hammer Drive",
+    featured: true,
+    badgeKey: "rt_product_drive_badge",
+    badgeFallback: "Most Popular",
   },
   {
     slug: "MarketPoster",
@@ -1310,9 +1361,15 @@ const PRODUCT_COL_SPECS: ProductColSpec[] = [
 
 function renderProductColCard(spec: ProductColSpec, live: boolean, connecting: boolean): string {
   const name = copy(spec.nameKey, spec.nameFallback);
-  return `<article class="product-col product-col--${spec.modifier}${productColVoiceSessionClass(spec.slug, live, connecting)}" data-voice-product="${escapeHtml(spec.slug)}">
+  const featuredClass = spec.featured ? " product-col--featured" : "";
+  const badge =
+    spec.featured && spec.badgeKey && spec.badgeFallback
+      ? `<span class="product-col__badge">${escapeHtml(copy(spec.badgeKey, spec.badgeFallback))}</span>`
+      : "";
+  return `<article class="product-col product-col--${spec.modifier}${featuredClass}${productColVoiceSessionClass(spec.slug, live, connecting)}" data-voice-product="${escapeHtml(spec.slug)}">
               <div class="product-col__atmosphere" aria-hidden="true"></div>
               <div class="product-col__surface">
+                <div class="product-col__badge-row">${badge}</div>
                 <header class="product-col__head">
                   <h2 class="product-col__name">${escapeHtml(name)}</h2>
                   <p class="product-col__tagline">${escapeHtml(copy(spec.taglineKey, spec.taglineFallback))}</p>
@@ -2316,6 +2373,9 @@ function mount() {
       voiceMicPrewarmStarted = true;
       prewarmElevenLabsBackend("global-pointerdown");
       prefetchElConversationToken("global-pointerdown");
+      // Warm the lazily-split voice SDK chunk so the network fetch overlaps with
+      // user intent rather than blocking the actual call start.
+      void loadElevenLabsClient().catch(() => {});
       // Do NOT acquire the mic here — mic is only opened when the call actually starts.
     };
     document.addEventListener("pointerdown", warmOnce, { capture: true, once: true });
@@ -2852,6 +2912,7 @@ function mount() {
           </nav>` : ""}
           <div class="chrome__actions">
             ${renderChromeLoginLink()}
+            ${renderChromeSalesPhone()}
           </div>
           ${CHROME_NAV_SECTIONS.length ? `<button type="button" class="chrome__menu-toggle${mobileNavMenuOpen ? " is-open" : ""}" id="chromeMenuToggle"
             aria-expanded="${mobileNavMenuOpen}" aria-controls="chromeMobileMenu"
@@ -3021,6 +3082,13 @@ function mount() {
         </main>
         <footer class="site-footer" role="contentinfo">
           <nav class="site-footer__nav" aria-label="${escapeHtml(copy("rt_site_footer_aria", "Legal and account"))}">
+            <div class="site-footer__sales">
+              <a href="${escapeHtml(salesPhone().href)}" class="chrome__jump chrome__jump--sales-foot" data-sales-call="footer" aria-label="${escapeHtml(copy("rt_sales_phone_aria", "Call Hammer sales at {phone}").replace("{phone}", salesPhone().display))}">
+                <span class="chrome__sales-foot__icon" aria-hidden="true">${iconSalesPhone}</span>
+                <span class="chrome__sales-foot__label">${escapeHtml(copy("rt_footer_sales_label", "Talk to a sales rep"))}</span>
+                <span class="chrome__sales-foot__num">${escapeHtml(salesPhone().display)}</span>
+              </a>
+            </div>
             <div class="site-footer__legal">
               <button type="button" class="chrome__jump chrome__jump--panel${openNavPanel === "terms" ? " is-active" : ""}" data-panel="terms" aria-expanded="${openNavPanel === "terms"}" aria-controls="navPanelTerms" id="footerOpenTerms">${escapeHtml(copy("rt_site_footer_terms", "Terms of Service"))}</button>
               <button type="button" class="chrome__jump chrome__jump--panel${openNavPanel === "privacy" ? " is-active" : ""}" data-panel="privacy" aria-expanded="${openNavPanel === "privacy"}" aria-controls="navPanelPrivacy" id="footerOpenPrivacy">${escapeHtml(copy("rt_site_footer_privacy", "Privacy Policy"))}</button>
@@ -3213,6 +3281,7 @@ function mount() {
       type ModeCb   = (props: { mode: "speaking" | "listening" }) => void;
       type ErrCb    = (message: string, context?: unknown) => void;
 
+      const { VoiceConversation: Conversation } = await loadElevenLabsClient();
       const conv = await Conversation.startSession({
         conversationToken,
         connectionType: "webrtc",

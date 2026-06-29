@@ -72,6 +72,15 @@ function helpPageStylesPlugin() {
 
 export default defineConfig({
   plugins: [helpPageRoutePlugin(), helpPageStylesPlugin()],
+  build: {
+    // Guardrail: the critical landing entry must stay lean. The heavy voice SDK
+    // (@elevenlabs/client, ~494 kB) is dynamically imported in main.ts so it
+    // splits into its own on-demand chunk and stays off the first-paint path.
+    // This limit sits just above that lazy chunk so normal builds are quiet, but
+    // a regression that statically pulls the SDK back into the entry (~620 kB)
+    // trips the warning instead of silently slowing the first page load.
+    chunkSizeWarningLimit: 550,
+  },
   resolve: {
     alias: {
       // Ensure browser voice session setup (mic/worklet/WebSocket) is registered in prod builds.
