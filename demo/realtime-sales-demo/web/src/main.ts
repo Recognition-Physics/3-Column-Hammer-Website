@@ -3085,7 +3085,7 @@ function mount() {
             <div class="site-footer__sales">
               <a href="${escapeHtml(salesPhone().href)}" class="chrome__jump chrome__jump--sales-foot" data-sales-call="footer" aria-label="${escapeHtml(copy("rt_sales_phone_aria", "Call Hammer sales at {phone}").replace("{phone}", salesPhone().display))}">
                 <span class="chrome__sales-foot__icon" aria-hidden="true">${iconSalesPhone}</span>
-                <span class="chrome__sales-foot__label">${escapeHtml(copy("rt_footer_sales_label", "Talk to a sales rep"))}</span>
+                <span class="chrome__sales-foot__label">${escapeHtml(copy("rt_footer_sales_label", "Talk to sales"))}</span>
                 <span class="chrome__sales-foot__num">${escapeHtml(salesPhone().display)}</span>
               </a>
             </div>
