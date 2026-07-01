@@ -24,6 +24,35 @@ Only use **`VITE_*`** for non-secret UI settings (voice name, sign-in URL).
 
 The browser talks to **`/api/*`** on the same host (Vercel) or via Vite proxy to port **8780** locally.
 
+## Prerendered content — `view-source:` must show real HTML
+
+The site is a client-rendered SPA, so the raw HTML used to be an empty `Loading…`
+shell. Crawlers, link unfurlers, and SMS/compliance reviewers (e.g. **Textedly**)
+that don't run JS saw nothing — which blocked approvals. To fix it we bake a static
+snapshot of the landing page into the deployed HTML:
+
+- **`scripts/prerender.mjs`** loads the *built* site in headless Chrome (via
+  `puppeteer-core` + your local Chrome/Edge — no bundled download) and writes the
+  rendered `#app` DOM to **`prerendered/landing.snapshot.html`** (committed).
+- A `closeBundle` plugin in **`vite.config.ts`** injects that snapshot into
+  `dist/index.html` on every `npm run build`. It only reads a file — **the Vercel
+  build needs no browser** and can't fail on a missing Chromium.
+- On boot, `main.ts`'s `render()` replaces `#app`, so the snapshot is a pure
+  pre-hydration view (it also speeds up first paint).
+
+**Regenerate the snapshot whenever the landing copy/layout changes:**
+
+```powershell
+cd demo/realtime-sales-demo/web
+npm run prerender   # vite build + headless snapshot → prerendered/landing.snapshot.html
+git add prerendered/landing.snapshot.html
+```
+
+Point at a specific browser with `PUPPETEER_EXECUTABLE_PATH` if auto-detection
+fails. If the snapshot is ever missing, the build still succeeds (it logs a warning
+and ships the empty shell) — so a stale/missing snapshot never breaks a deploy, but
+it does mean `view-source:` reverts to a shell until you re-run `npm run prerender`.
+
 ## Performance — keep first load fast
 
 The landing page must paint without waiting on voice-only code. Rules that keep it that way:
