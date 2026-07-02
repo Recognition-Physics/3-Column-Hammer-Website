@@ -67,6 +67,37 @@
       padding-bottom: 16px;
     }
 
+    .help-contact-head {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .help-contact-head h1 {
+      font-family: var(--font-display, "Fraunces", serif);
+      font-size: clamp(1.6rem, 3.2vw, 2.1rem);
+      font-weight: 600;
+      color: var(--landing-ink, #0c0f14);
+      margin: 0 0 10px;
+    }
+
+    .help-contact-head p {
+      font-family: var(--font-body, "DM Sans", sans-serif);
+      font-size: 0.9875rem;
+      line-height: 1.55;
+      color: rgba(12, 15, 20, 0.68);
+      margin: 0;
+    }
+
+    .help-contact-head a {
+      color: var(--landing-red, #c91e1e);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .help-contact-head a:hover {
+      text-decoration: underline;
+    }
+
     #hubspot-form-container {
       min-height: 120px;
       padding-bottom: 8px;
@@ -186,6 +217,14 @@
 
     <main class="help-main">
       <div class="help-form-wrap">
+        <div class="help-contact-head">
+          <h1>Contact Support</h1>
+          <p>
+            Email us at <a href="mailto:support@hammertime.com">support@hammertime.com</a>
+            or call <a href="tel:+15128831336">(512) 883-1336</a> — or send us a message
+            below and our team will get back to you shortly.
+          </p>
+        </div>
         <div id="hubspot-form-container" aria-live="polite">
           <div class="form-loading" id="form-loading" aria-label="Loading contact form">
             <div class="form-loading__dot"></div>
@@ -199,11 +238,12 @@
     <footer class="site-footer" role="contentinfo">
       <nav class="site-footer__nav" aria-label="Legal and account">
         <div class="site-footer__legal">
-          <a href="/?panel=terms" class="chrome__jump chrome__jump--panel" id="footerOpenTerms">Terms of Service</a>
-          <a href="/?panel=privacy" class="chrome__jump chrome__jump--panel" id="footerOpenPrivacy">Privacy Policy</a>
+          <a href="/about" class="chrome__jump chrome__jump--panel" id="footerOpenAbout">About Us</a>
+          <a href="/terms" class="chrome__jump chrome__jump--panel" id="footerOpenTerms">Terms of Service</a>
+          <a href="/privacy" class="chrome__jump chrome__jump--panel" id="footerOpenPrivacy">Privacy Policy</a>
         </div>
         <div class="site-footer__reviews">
-          <a href="/?panel=reviews" class="chrome__jump chrome__jump--panel" id="footerOpenReviews">Reviews</a>
+          <a href="/reviews" class="chrome__jump chrome__jump--panel" id="footerOpenReviews">Reviews</a>
           <a href="/help" class="chrome__jump" id="footerOpenSupport" aria-current="page">Contact Support</a>
         </div>
       </nav>

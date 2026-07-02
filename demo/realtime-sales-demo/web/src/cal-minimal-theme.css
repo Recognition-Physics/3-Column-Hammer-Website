@@ -1273,6 +1273,45 @@ body:has(.app-shell--landing) {
   height: 0;
 }
 
+/* ─── About Us panel — compact, content-sized, centered ─── */
+.app-shell--landing .nav-panel.nav-panel--glass:has(#navPanelAbout.is-active) {
+  width: min(560px, calc(100vw - 32px)) !important;
+  max-height: none;
+  height: auto;
+}
+
+.app-shell--landing .nav-panel__body:has(#navPanelAbout.is-active) {
+  flex: 0 1 auto;
+  overflow: visible;
+  padding: 20px 28px 26px !important;
+}
+
+/* Center the "About Us" title; pad left to visually offset the close button. */
+.app-shell--landing .nav-panel:has(#navPanelAbout.is-active) .nav-panel__title {
+  flex: 1;
+  align-items: center;
+  padding-left: 48px;
+}
+
+.app-shell--landing #navPanelAbout {
+  text-align: center;
+}
+
+.app-shell--landing #navPanelAbout .nav-panel__lead {
+  max-width: 46ch !important;
+  margin: 0 auto 14px !important;
+  text-align: center !important;
+}
+
+.app-shell--landing #navPanelAbout .nav-panel__lead:last-child {
+  margin-bottom: 0 !important;
+}
+
+.app-shell--landing #navPanelAbout .nav-panel__lead--contact-email {
+  margin-top: 0 !important;
+  line-height: 1.7;
+}
+
 .app-shell--landing #navPanelReviews.is-active .reviews-video {
   margin-bottom: 14px;
 }
@@ -1819,6 +1858,24 @@ body:has(.app-shell--landing) {
   white-space: nowrap;
 }
 
+/* Sales + support lines stacked in the header, labels and numbers column-aligned. */
+.app-shell--landing .chrome__phones {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  min-width: 0;
+}
+
+.app-shell--landing .chrome__phones .chrome__sales__prefix {
+  min-width: 4.8em;
+  text-align: right;
+}
+
+.app-shell--landing .chrome__phones .chrome__sales__num {
+  font-variant-numeric: tabular-nums;
+}
+
 /* Header human sales line — matches the LOGIN chip; number carries the accent. */
 .app-shell--landing .chrome__sales {
   display: inline-flex;
@@ -1826,6 +1883,11 @@ body:has(.app-shell--landing) {
   gap: 0.42em;
   white-space: nowrap;
   text-decoration: none;
+}
+
+/* Tighter vertical rhythm so the stacked pair stays header-height. */
+.app-shell--landing .chrome__phones .chrome__sales {
+  padding: 1px 4px;
 }
 
 .app-shell--landing .chrome__sales__icon {

@@ -994,10 +994,10 @@ let voiceSessionAnchoredInNavPanel = false;
 let voiceSessionAnchoredInFooter = false;
 /** Bumped on endCall so an in-flight startCall cannot go live after the panel is dismissed. */
 let voiceCallEpoch = 0;
-type NavPanelId = "reviews" | "faq" | "terms" | "privacy" | "support";
+type NavPanelId = "reviews" | "faq" | "terms" | "privacy" | "support" | "about";
 
 function isLegalNavPanel(panel: NavPanelId | null): boolean {
-  return panel === "terms" || panel === "privacy" || panel === "support";
+  return panel === "terms" || panel === "privacy" || panel === "support" || panel === "about";
 }
 
 const NAV_PANEL_SECTION_IDS: Record<NavPanelId, string> = {
@@ -1006,17 +1006,40 @@ const NAV_PANEL_SECTION_IDS: Record<NavPanelId, string> = {
   terms: "navPanelTerms",
   privacy: "navPanelPrivacy",
   support: "navPanelSupport",
+  about: "navPanelAbout",
 };
+
+/** Every panel is addressable at its own path (e.g. hammertime.com/terms) for crawlers and compliance reviewers. */
+const NAV_PANEL_PATHS: Record<NavPanelId, string> = {
+  reviews: "/reviews",
+  faq: "/faq",
+  terms: "/terms",
+  privacy: "/privacy",
+  support: "/support",
+  about: "/about",
+};
+
+function navPanelForPath(pathname: string): NavPanelId | null {
+  const normalized = pathname.replace(/\/+$/, "") || "/";
+  for (const [panel, path] of Object.entries(NAV_PANEL_PATHS) as [NavPanelId, string][]) {
+    if (normalized === path) return panel;
+  }
+  return null;
+}
 
 function initialOpenNavPanel(): NavPanelId | null {
   if (typeof window === "undefined") return null;
+  const fromPath = navPanelForPath(window.location.pathname);
+  if (fromPath) return fromPath;
+  // Legacy deep links (?panel=terms) keep working.
   const panel = new URLSearchParams(window.location.search).get("panel");
   if (
     panel === "reviews" ||
     panel === "faq" ||
     panel === "terms" ||
     panel === "privacy" ||
-    panel === "support"
+    panel === "support" ||
+    panel === "about"
   ) {
     return panel;
   }
@@ -1031,29 +1054,45 @@ function initialOpenNavPanel(): NavPanelId | null {
 function syncNavPanelUrl(panel: NavPanelId | null): void {
   if (typeof window === "undefined" || !window.history?.replaceState) return;
   const url = new URL(window.location.href);
-  if (panel) {
-    url.searchParams.set("panel", panel);
-  } else {
-    url.searchParams.delete("panel");
-  }
+  // Only manage the URL on the landing page and panel paths — never hijack e.g. /help.
+  const normalizedPath = url.pathname.replace(/\/+$/, "") || "/";
+  if (normalizedPath !== "/" && !navPanelForPath(normalizedPath)) return;
+  url.searchParams.delete("panel");
+  url.pathname = panel ? NAV_PANEL_PATHS[panel] : "/";
   const next = `${url.pathname}${url.search}${url.hash}`;
   const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
   if (next === current) return;
   window.history.replaceState(window.history.state, "", next);
 }
 
+/** The "Get started" sign-up modal is addressable at its own path, like the nav panels. */
+const LEAD_MODAL_PATH = "/get-started";
+
+function initialLeadModalOpen(): boolean {
+  if (typeof window === "undefined") return false;
+  const path = window.location.pathname.replace(/\/+$/, "") || "/";
+  if (path === LEAD_MODAL_PATH) return true;
+  // Legacy deep link (?modal=get-started) keeps working.
+  return new URLSearchParams(window.location.search).get("modal") === "get-started";
+}
+
 /**
- * Reflect the "Get started" lead modal in the URL via the `modal` query param so the
- * address bar shows a distinct link while the form is open. Reverts when closed.
- * Mirrors syncNavPanelUrl(): no reload, no view change, no-op if URL already matches.
+ * Reflect the "Get started" lead modal in the URL via the /get-started path so the
+ * address bar shows a distinct, shareable link while the form is open. Reverts when
+ * closed. Mirrors syncNavPanelUrl(): no reload, no view change, no-op if URL matches.
  */
 function syncLeadModalUrl(open: boolean): void {
   if (typeof window === "undefined" || !window.history?.replaceState) return;
   const url = new URL(window.location.href);
+  const normalizedPath = url.pathname.replace(/\/+$/, "") || "/";
+  const managed =
+    normalizedPath === "/" || normalizedPath === LEAD_MODAL_PATH || !!navPanelForPath(normalizedPath);
+  if (!managed) return;
+  url.searchParams.delete("modal");
   if (open) {
-    url.searchParams.set("modal", "get-started");
-  } else {
-    url.searchParams.delete("modal");
+    url.pathname = LEAD_MODAL_PATH;
+  } else if (normalizedPath === LEAD_MODAL_PATH) {
+    url.pathname = openNavPanel ? NAV_PANEL_PATHS[openNavPanel] : "/";
   }
   const next = `${url.pathname}${url.search}${url.hash}`;
   const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
@@ -1063,7 +1102,7 @@ function syncLeadModalUrl(open: boolean): void {
 
 let openNavPanel: NavPanelId | null = initialOpenNavPanel();
 let mobileNavMenuOpen = false;
-let leadModalOpen = false;
+let leadModalOpen = initialLeadModalOpen();
 let callMeModalOpen = false;
 /** Product name from the card Sign Up button that last opened the lead modal (e.g. "Hammer Drive"). */
 let leadModalSourceProduct = "";
@@ -1076,16 +1115,16 @@ function renderChromeNavJumpButtons(extraClass = ""): string {
   return CHROME_NAV_SECTIONS.map(({ id, key, fallback, controls }) => {
     const active = openNavPanel === id;
     const cls = `chrome__jump chrome__jump--panel${extraClass ? ` ${extraClass}` : ""}${active ? " is-active" : ""}`;
-    return `<button type="button" class="${cls}" data-panel="${id}"
+    return `<a href="${NAV_PANEL_PATHS[id]}" class="${cls}" data-panel="${id}"
               aria-expanded="${active}" aria-controls="${controls}">
               ${escapeHtml(copy(key, fallback))}
-            </button>`;
+            </a>`;
   }).join("\n");
 }
 
 function renderFooterReviewsButton(): string {
   const active = openNavPanel === "reviews";
-  return `<button type="button" class="chrome__jump chrome__jump--panel${active ? " is-active" : ""}" data-panel="reviews" aria-expanded="${active}" aria-controls="navPanelReviews" id="footerOpenReviews">${escapeHtml(copy("rt_nav_reviews", "Reviews"))}</button>`;
+  return `<a href="/reviews" class="chrome__jump chrome__jump--panel${active ? " is-active" : ""}" data-panel="reviews" aria-expanded="${active}" aria-controls="navPanelReviews" id="footerOpenReviews">${escapeHtml(copy("rt_nav_reviews", "Reviews"))}</a>`;
 }
 
 function renderChromeSignUpButton(opts?: { id?: string; extraClass?: string; dataAction?: string }): string {
@@ -1103,16 +1142,26 @@ function renderChromeLoginLink(extraClass = ""): string {
   return `<a class="${cls}" href="${escapeHtml(SIGN_IN_URL)}" target="_blank" rel="noopener noreferrer">${escapeHtml(copy("rt_site_footer_login", "Login"))}</a>`;
 }
 
-/** Header click-to-call to a human rep. Collapses to a tap-to-call handset glyph on phones. */
+/** Header click-to-call to a human rep, with the support line stacked below. Collapses to a tap-to-call handset glyph on phones. */
 function renderChromeSalesPhone(): string {
   const phone = salesPhone();
   const prefix = copy("rt_sales_phone_prefix", "Sales");
   const aria = copy("rt_sales_phone_aria", "Call Hammer sales at {phone}").replace("{phone}", phone.display);
-  return `<a class="chrome__jump chrome__sales" href="${escapeHtml(phone.href)}" data-sales-call="header" aria-label="${escapeHtml(aria)}">
-            <span class="chrome__sales__icon" aria-hidden="true">${iconSalesPhone}</span>
-            <span class="chrome__sales__prefix">${escapeHtml(prefix)}</span>
-            <span class="chrome__sales__num">${escapeHtml(phone.display)}</span>
-          </a>`;
+  const supportPrefix = copy("rt_support_phone_prefix", "Support");
+  const supportDisplay = copy("rt_support_phone_display", "(512) 883-1336");
+  const supportHref = `tel:+1${copy("rt_support_phone_tel", "5128831336")}`;
+  const supportAria = copy("rt_support_phone_aria", "Call Hammer support at {phone}").replace("{phone}", supportDisplay);
+  return `<div class="chrome__phones">
+            <a class="chrome__jump chrome__sales" href="${escapeHtml(phone.href)}" data-sales-call="header" aria-label="${escapeHtml(aria)}">
+              <span class="chrome__sales__icon" aria-hidden="true">${iconSalesPhone}</span>
+              <span class="chrome__sales__prefix">${escapeHtml(prefix)}</span>
+              <span class="chrome__sales__num">${escapeHtml(phone.display)}</span>
+            </a>
+            <a class="chrome__jump chrome__sales chrome__sales--support" href="${escapeHtml(supportHref)}" aria-label="${escapeHtml(supportAria)}">
+              <span class="chrome__sales__prefix">${escapeHtml(supportPrefix)}</span>
+              <span class="chrome__sales__num">${escapeHtml(supportDisplay)}</span>
+            </a>
+          </div>`;
 }
 
 function navPanelTitle(panel: NavPanelId): string {
@@ -1122,6 +1171,7 @@ function navPanelTitle(panel: NavPanelId): string {
     terms: ["rt_site_footer_terms", "Terms of Service"],
     privacy: ["rt_site_footer_privacy", "Privacy Policy"],
     support: ["rt_site_footer_support", "Contact Support"],
+    about: ["rt_footer_about_h", "About Us"],
   };
   const [key, fallback] = keys[panel];
   return copy(key, fallback);
@@ -2690,7 +2740,7 @@ function mount() {
       navFoot.hidden = !openNavPanel || isLegalNavPanel(openNavPanel);
     }
 
-    root.querySelectorAll<HTMLButtonElement>("button[data-panel]").forEach((btn) => {
+    root.querySelectorAll<HTMLElement>("[data-panel]").forEach((btn) => {
       const panel = btn.dataset.panel as NavPanelId | undefined;
       const active = !!panel && openNavPanel === panel;
       btn.classList.toggle("is-active", active);
@@ -3023,7 +3073,29 @@ function mount() {
               </div>
               <div id="navPanelSupport" class="nav-panel__section nav-panel__section--support ${openNavPanel === "support" ? "is-active" : ""}">
                 <p class="nav-panel__lead">${escapeHtml(copy("rt_nav_panel_support_lead", "Tell us how we can help. Our team will get back to you shortly."))}</p>
+                <p class="nav-panel__lead nav-panel__lead--contact-email">${escapeHtml(copy("rt_nav_panel_support_email_prefix", "Email us at"))} <a class="nav-panel__contact-link" href="mailto:support@hammertime.com">support@hammertime.com</a> ${escapeHtml(copy("rt_nav_panel_support_phone_prefix", "or call"))} <a class="nav-panel__contact-link" href="tel:+15128831336">(512) 883-1336</a>.</p>
                 <div id="hubspotSupportForm" class="hubspot-support-form" aria-live="polite"></div>
+              </div>
+              <div id="navPanelAbout" class="nav-panel__section nav-panel__section--about ${openNavPanel === "about" ? "is-active" : ""}">
+                <p class="nav-panel__lead">${escapeHtml(
+                  copy(
+                    "rt_footer_about_p1",
+                    "Hammer Corp is a software company based in Austin, Texas. We build AI tools that help car dealerships answer leads fast, follow up, and book more appointments — day and night.",
+                  ),
+                )}</p>
+                <p class="nav-panel__lead">${escapeHtml(
+                  copy(
+                    "rt_footer_about_p2",
+                    "Dealers use Hammer to reply to every lead in seconds, keep following up when buyers go quiet, and log everything in the CRM they already use.",
+                  ),
+                )}</p>
+                <p class="nav-panel__lead nav-panel__lead--contact-email">
+                  <a class="nav-panel__contact-link" href="mailto:support@hammertime.com">support@hammertime.com</a>
+                  <span aria-hidden="true"> · </span>
+                  <a class="nav-panel__contact-link" href="tel:+15128831336">(512) 883-1336</a>
+                  <br />
+                  ${escapeHtml(copy("rt_footer_about_addr", "Hammer Corp · 1401 Lavaca St, Suite 41100, Austin, TX 78701"))}
+                </p>
               </div>
               <div id="navPanelTerms" class="nav-panel__section ${openNavPanel === "terms" ? "is-active" : ""}">
                 ${hammerTermsFragment}
@@ -3082,16 +3154,10 @@ function mount() {
         </main>
         <footer class="site-footer" role="contentinfo">
           <nav class="site-footer__nav" aria-label="${escapeHtml(copy("rt_site_footer_aria", "Legal and account"))}">
-            <div class="site-footer__sales">
-              <a href="${escapeHtml(salesPhone().href)}" class="chrome__jump chrome__jump--sales-foot" data-sales-call="footer" aria-label="${escapeHtml(copy("rt_sales_phone_aria", "Call Hammer sales at {phone}").replace("{phone}", salesPhone().display))}">
-                <span class="chrome__sales-foot__icon" aria-hidden="true">${iconSalesPhone}</span>
-                <span class="chrome__sales-foot__label">${escapeHtml(copy("rt_footer_sales_label", "Talk to sales"))}</span>
-                <span class="chrome__sales-foot__num">${escapeHtml(salesPhone().display)}</span>
-              </a>
-            </div>
             <div class="site-footer__legal">
-              <button type="button" class="chrome__jump chrome__jump--panel${openNavPanel === "terms" ? " is-active" : ""}" data-panel="terms" aria-expanded="${openNavPanel === "terms"}" aria-controls="navPanelTerms" id="footerOpenTerms">${escapeHtml(copy("rt_site_footer_terms", "Terms of Service"))}</button>
-              <button type="button" class="chrome__jump chrome__jump--panel${openNavPanel === "privacy" ? " is-active" : ""}" data-panel="privacy" aria-expanded="${openNavPanel === "privacy"}" aria-controls="navPanelPrivacy" id="footerOpenPrivacy">${escapeHtml(copy("rt_site_footer_privacy", "Privacy Policy"))}</button>
+              <a href="/about" class="chrome__jump chrome__jump--panel${openNavPanel === "about" ? " is-active" : ""}" data-panel="about" aria-expanded="${openNavPanel === "about"}" aria-controls="navPanelAbout" id="footerOpenAbout">${escapeHtml(copy("rt_footer_about_h", "About Us"))}</a>
+              <a href="/terms" class="chrome__jump chrome__jump--panel${openNavPanel === "terms" ? " is-active" : ""}" data-panel="terms" aria-expanded="${openNavPanel === "terms"}" aria-controls="navPanelTerms" id="footerOpenTerms">${escapeHtml(copy("rt_site_footer_terms", "Terms of Service"))}</a>
+              <a href="/privacy" class="chrome__jump chrome__jump--panel${openNavPanel === "privacy" ? " is-active" : ""}" data-panel="privacy" aria-expanded="${openNavPanel === "privacy"}" aria-controls="navPanelPrivacy" id="footerOpenPrivacy">${escapeHtml(copy("rt_site_footer_privacy", "Privacy Policy"))}</a>
             </div>
             <div class="site-footer__reviews">
               ${renderFooterReviewsButton()}
@@ -3136,9 +3202,9 @@ function mount() {
                 <span class="call-me-modal__consent-text">${escapeHtml(copy("rt_lead_consent", "I agree to receive automated marketing & account calls and texts from Hammer at this number. Consent isn't required to buy. Frequency varies; msg & data rates may apply. Reply STOP to cancel, HELP for help."))}</span>
               </label>
               <p class="lead-consent-fineprint__links">
-                <a class="lead-consent-fineprint__link" href="?panel=terms" target="_blank" rel="noopener">${escapeHtml(copy("rt_site_footer_terms", "Terms of Service"))}</a>
+                <a class="lead-consent-fineprint__link" href="/terms" target="_blank" rel="noopener">${escapeHtml(copy("rt_site_footer_terms", "Terms of Service"))}</a>
                 <span class="lead-consent-fineprint__sep" aria-hidden="true">|</span>
-                <a class="lead-consent-fineprint__link" href="?panel=privacy" target="_blank" rel="noopener">${escapeHtml(copy("rt_site_footer_privacy", "Privacy Policy"))}</a>
+                <a class="lead-consent-fineprint__link" href="/privacy" target="_blank" rel="noopener">${escapeHtml(copy("rt_site_footer_privacy", "Privacy Policy"))}</a>
               </p>
               <p id="leadFormStatus" class="lead-form-status" role="status" aria-live="polite"></p>
               <button type="submit" class="lead-submit"${leadConsentChecked ? "" : " disabled"}><span class="lead-submit__label">${escapeHtml(copy("rt_lead_submit", "Yes, sign me up!"))}</span></button>
@@ -3164,7 +3230,7 @@ function mount() {
         ${renderCallMeModalHtml()}
       </div>`;
 
-    root.querySelectorAll<HTMLButtonElement>("button[data-panel]").forEach((btn) => {
+    root.querySelectorAll<HTMLElement>("[data-panel]").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
         const panel = btn.dataset.panel as NavPanelId | undefined;

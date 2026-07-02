@@ -418,6 +418,21 @@ textarea {
   letter-spacing: -0.01em;
 }
 
+.nav-panel__lead--contact-email {
+  margin-top: -8px;
+}
+
+.nav-panel__contact-link {
+  color: var(--red-dark);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.nav-panel__contact-link:hover {
+  color: var(--red);
+}
+
 .nav-panel__legal {
   max-width: 52ch;
 }

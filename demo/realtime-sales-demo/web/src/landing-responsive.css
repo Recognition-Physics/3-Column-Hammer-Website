@@ -230,6 +230,11 @@
   .app-shell--landing .chrome__sales {
     padding: 8px 6px;
   }
+
+  /* Support line has no icon of its own — hide it when the sales line collapses. */
+  .app-shell--landing .chrome__sales--support {
+    display: none;
+  }
 }
 
 /* Footer sales row: hide the handset glyph on phones to keep the label + number clean. */
