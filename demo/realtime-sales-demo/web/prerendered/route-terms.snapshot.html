@@ -81,9 +81,9 @@
 
         
 
-        <div class="nav-panel-layer " hidden="" aria-hidden="true">
+        <div class="nav-panel-layer is-open" aria-hidden="false">
           <div class="nav-panel-backdrop" data-action="close" aria-hidden="true"></div>
-          <section class="nav-panel nav-panel--glass" role="dialog" aria-modal="false" aria-label="Navigation panel">
+          <section class="nav-panel nav-panel--glass" role="dialog" aria-modal="false" aria-label="Legal information">
             <div class="nav-panel__shine" aria-hidden="true"></div>
             <span class="nav-panel__accent" aria-hidden="true"></span>
             <span class="nav-panel__grid" aria-hidden="true"></span>
@@ -93,7 +93,7 @@
                   <span class="nav-panel__kicker-dot" aria-hidden="true"></span>
                   Quick tour
                 </span>
-                <span class="nav-panel__h"></span>
+                <span class="nav-panel__h">Terms of Service</span>
               </div>
               <button type="button" class="nav-panel__close" data-action="close" aria-label="Close">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"></path></svg>
@@ -181,7 +181,7 @@
                   Hammer Corp · 1401 Lavaca St, Suite 41100, Austin, TX 78701
                 </p>
               </div>
-              <div id="navPanelTerms" class="nav-panel__section ">
+              <div id="navPanelTerms" class="nav-panel__section is-active">
                 <div class="nav-panel__legal nav-panel__legal--full-terms nav-panel__legal--hammer-terms">
 <p class="nav-panel__legal-meta"><strong>Last updated:</strong> September 4, 2025</p>
 <h3 class="nav-panel__legal-h">1. Scope of Terms</h3>
@@ -496,7 +496,7 @@
           <nav class="site-footer__nav" aria-label="Legal and account">
             <div class="site-footer__legal">
               <a href="/about" class="chrome__jump chrome__jump--panel" data-panel="about" aria-expanded="false" aria-controls="navPanelAbout" id="footerOpenAbout">About Us</a>
-              <a href="/terms" class="chrome__jump chrome__jump--panel" data-panel="terms" aria-expanded="false" aria-controls="navPanelTerms" id="footerOpenTerms">Terms of Service</a>
+              <a href="/terms" class="chrome__jump chrome__jump--panel is-active" data-panel="terms" aria-expanded="true" aria-controls="navPanelTerms" id="footerOpenTerms">Terms of Service</a>
               <a href="/privacy" class="chrome__jump chrome__jump--panel" data-panel="privacy" aria-expanded="false" aria-controls="navPanelPrivacy" id="footerOpenPrivacy">Privacy Policy</a>
             </div>
             <div class="site-footer__reviews">

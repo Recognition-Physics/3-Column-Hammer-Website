@@ -1,0 +1,28 @@
+# Hammer
+
+> Hammer (Hammer Corp, Austin, TX) builds human-like agentic AI for car dealerships. Its AI answers new sales leads in seconds by text and voice, follows up for weeks, and books appointments directly in the dealership's existing CRM. Google rating 4.6 stars across 266 reviews.
+
+Hammer's products:
+
+- **Hammer Drive** (most popular): instantly answers leads from every source, follows up until they book, and books appointments right in your CRM. Pricing varies by lot size.
+- **Facebook Ads**: runs Facebook and Instagram ads generated from the dealership's own inventory; Hammer answers every lead. $299/mo + ad spend.
+- **MarketPoster**: posts the whole lot to Facebook Marketplace in one click, with bulk posting and auto-reposting. From $199/mo.
+
+Key facts:
+
+- Works with the dealership's existing CRM (no CRM switch required).
+- Most stores go live in under 72 business hours once onboarding and feeds are connected.
+- Hammer complements, not replaces, a dealership's BDC: it handles the first reply and follow-up; the dealer's team closes.
+- Voice AI assistant "Hannah" is available on the website for live product questions.
+- Sales: (512) 886-9117 · Support: (512) 883-1336 · support@hammertime.com
+- Address: Hammer Corp, 1401 Lavaca St, Suite 41100, Austin, TX 78701
+
+## Pages
+
+- [Home](https://www.hammertime.com/): products, pricing, and live voice demo
+- [Reviews](https://www.hammertime.com/reviews): dealer testimonials (Keweenaw Chevy, Peltier Kia Tyler, Turpin CDJR)
+- [FAQ](https://www.hammertime.com/faq): common questions about what Hammer does, BDC fit, CRM compatibility, and go-live time
+- [About](https://www.hammertime.com/about): company background and contact details
+- [Support](https://www.hammertime.com/support): support contact information
+- [Terms](https://www.hammertime.com/terms)
+- [Privacy](https://www.hammertime.com/privacy)

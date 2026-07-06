@@ -81,9 +81,9 @@
 
         
 
-        <div class="nav-panel-layer " hidden="" aria-hidden="true">
+        <div class="nav-panel-layer is-open" aria-hidden="false">
           <div class="nav-panel-backdrop" data-action="close" aria-hidden="true"></div>
-          <section class="nav-panel nav-panel--glass" role="dialog" aria-modal="false" aria-label="Navigation panel">
+          <section class="nav-panel nav-panel--glass" role="dialog" aria-modal="false" aria-label="Legal information">
             <div class="nav-panel__shine" aria-hidden="true"></div>
             <span class="nav-panel__accent" aria-hidden="true"></span>
             <span class="nav-panel__grid" aria-hidden="true"></span>
@@ -93,7 +93,7 @@
                   <span class="nav-panel__kicker-dot" aria-hidden="true"></span>
                   Quick tour
                 </span>
-                <span class="nav-panel__h"></span>
+                <span class="nav-panel__h">Privacy Policy</span>
               </div>
               <button type="button" class="nav-panel__close" data-action="close" aria-label="Close">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"></path></svg>
@@ -253,7 +253,7 @@
 </div>
 
               </div>
-              <div id="navPanelPrivacy" class="nav-panel__section ">
+              <div id="navPanelPrivacy" class="nav-panel__section is-active">
                 <div class="nav-panel__legal nav-panel__legal--full-terms nav-panel__legal--hammer-privacy">
 <p class="nav-panel__legal-brand"><strong>Hammer Corp Privacy Policy</strong></p>
 <p class="nav-panel__legal-meta"><strong>Last Updated:</strong> 10/10/2024</p>
@@ -497,7 +497,7 @@
             <div class="site-footer__legal">
               <a href="/about" class="chrome__jump chrome__jump--panel" data-panel="about" aria-expanded="false" aria-controls="navPanelAbout" id="footerOpenAbout">About Us</a>
               <a href="/terms" class="chrome__jump chrome__jump--panel" data-panel="terms" aria-expanded="false" aria-controls="navPanelTerms" id="footerOpenTerms">Terms of Service</a>
-              <a href="/privacy" class="chrome__jump chrome__jump--panel" data-panel="privacy" aria-expanded="false" aria-controls="navPanelPrivacy" id="footerOpenPrivacy">Privacy Policy</a>
+              <a href="/privacy" class="chrome__jump chrome__jump--panel is-active" data-panel="privacy" aria-expanded="true" aria-controls="navPanelPrivacy" id="footerOpenPrivacy">Privacy Policy</a>
             </div>
             <div class="site-footer__reviews">
               <a href="/reviews" class="chrome__jump chrome__jump--panel" data-panel="reviews" aria-expanded="false" aria-controls="navPanelReviews" id="footerOpenReviews">Reviews</a>

@@ -84,6 +84,16 @@ function helpPageStylesPlugin() {
  * No-ops (with a warning) if the snapshot is missing so the build never breaks.
  */
 function prerenderInjectPlugin() {
+  /** Panel routes shipped as real static pages (see scripts/prerender.mjs). */
+  const routePages: { name: string; title: string }[] = [
+    { name: "reviews", title: "Hammer Reviews — What dealers say" },
+    { name: "faq", title: "Hammer FAQ — AI for car dealerships" },
+    { name: "about", title: "About Hammer — Hammer Corp, Austin TX" },
+    { name: "support", title: "Hammer Support — Contact us" },
+    { name: "terms", title: "Hammer — Terms of Service" },
+    { name: "privacy", title: "Hammer — Privacy Policy" },
+  ];
+
   return {
     name: "prerender-inject",
     closeBundle() {
@@ -98,18 +108,48 @@ function prerenderInjectPlugin() {
         return;
       }
 
-      const snapshot = fs.readFileSync(snapshotPath, "utf8");
-      let html = fs.readFileSync(indexPath, "utf8");
+      const baseHtml = fs.readFileSync(indexPath, "utf8");
 
-      // Replace the empty mount node with one preloaded with the snapshot.
+      // Replace the empty mount node with one preloaded with a snapshot.
       const emptyApp = /<div id="app">\s*<\/div>/;
-      if (!emptyApp.test(html)) {
+      if (!emptyApp.test(baseHtml)) {
         console.warn('[prerender-inject] could not find empty <div id="app"></div> — skipped.');
         return;
       }
-      html = html.replace(emptyApp, `<div id="app">${snapshot}</div>`);
-      fs.writeFileSync(indexPath, html, "utf8");
+
+      const inject = (snapshot: string) =>
+        baseHtml.replace(emptyApp, `<div id="app">${snapshot}</div>`);
+
+      const snapshot = fs.readFileSync(snapshotPath, "utf8");
+      fs.writeFileSync(indexPath, inject(snapshot), "utf8");
       console.log(`[prerender-inject] injected landing snapshot (${snapshot.length} bytes).`);
+
+      // Emit each panel route as its own static page with visible panel content
+      // and route-specific canonical/title, so /faq, /reviews, etc. are distinct
+      // crawlable documents instead of SPA-fallback copies of the homepage.
+      for (const { name, title } of routePages) {
+        const routeSnapshotPath = path.resolve(webRoot, "prerendered", `route-${name}.snapshot.html`);
+        if (!fs.existsSync(routeSnapshotPath)) {
+          console.warn(`[prerender-inject] prerendered/route-${name}.snapshot.html missing — skipped /${name}.`);
+          continue;
+        }
+        const routeUrl = `https://www.hammertime.com/${name}`;
+        let html = inject(fs.readFileSync(routeSnapshotPath, "utf8"));
+        html = html
+          .replace(/<title>[\s\S]*?<\/title>/, `<title>${title}</title>`)
+          .replace(
+            /<link rel="canonical" href="[^"]*" \/>/,
+            `<link rel="canonical" href="${routeUrl}" />`,
+          )
+          .replace(
+            /<meta property="og:url" content="[^"]*" \/>/,
+            `<meta property="og:url" content="${routeUrl}" />`,
+          );
+        const outDir = path.resolve(webRoot, "dist", name);
+        fs.mkdirSync(outDir, { recursive: true });
+        fs.writeFileSync(path.join(outDir, "index.html"), html, "utf8");
+        console.log(`[prerender-inject] wrote dist/${name}/index.html.`);
+      }
     },
   };
 }

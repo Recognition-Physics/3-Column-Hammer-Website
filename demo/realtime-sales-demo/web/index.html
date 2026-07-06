@@ -6,7 +6,7 @@
     <title>Hammer — Human-like Agentic AI for dealerships</title>
     <meta
       name="description"
-      content="Hammer builds human-like agentic AI voice agents for car dealerships — answering calls, qualifying buyers, and booking appointments 24/7. Talk to Hannah, our voice AI, or call our sales team."
+      content="Hammer builds human-like AI for car dealerships — answering leads in seconds by text and voice, following up, and booking appointments 24/7."
     />
     <link rel="canonical" href="https://www.hammertime.com/" />
     <!-- Open Graph / social + crawler metadata -->
@@ -41,6 +41,159 @@
         rel="stylesheet"
       />
     </noscript>
+    <!-- Structured data for search + AI answer engines.
+         All facts sourced from on-page content (products, prices, FAQ, reviews, NAP).
+         TODO: add real sameAs profile URLs (LinkedIn, Crunchbase, G2, …) when confirmed. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": "https://www.hammertime.com/#organization",
+      "name": "Hammer",
+      "legalName": "Hammer Corp",
+      "url": "https://www.hammertime.com/",
+      "logo": "https://www.hammertime.com/hammer-wordmark.png",
+      "description": "Hammer builds human-like agentic AI for car dealerships — answering leads in seconds by text and voice, following up for weeks, and booking appointments in the dealership's existing CRM.",
+      "email": "support@hammertime.com",
+      "telephone": "+1-512-886-9117",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "1401 Lavaca St, Suite 41100",
+        "addressLocality": "Austin",
+        "addressRegion": "TX",
+        "postalCode": "78701",
+        "addressCountry": "US"
+      },
+      "contactPoint": [
+        {
+          "@type": "ContactPoint",
+          "contactType": "sales",
+          "telephone": "+1-512-886-9117"
+        },
+        {
+          "@type": "ContactPoint",
+          "contactType": "customer support",
+          "telephone": "+1-512-883-1336",
+          "email": "support@hammertime.com"
+        }
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.6",
+        "reviewCount": "266",
+        "bestRating": "5"
+      },
+      "review": [
+        {
+          "@type": "Review",
+          "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+          "author": { "@type": "Person", "name": "Brandon" },
+          "publisher": { "@type": "Organization", "name": "Keweenaw Chevy" },
+          "reviewBody": "I was actually recommending Hammer to someone else recently, and while I was talking, it booked two appointments right in front of us. That kind of instant impact speaks for itself."
+        },
+        {
+          "@type": "Review",
+          "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+          "author": { "@type": "Person", "name": "Brittany" },
+          "publisher": { "@type": "Organization", "name": "Peltier Kia Tyler" },
+          "reviewBody": "We've been using Hammer at Peltier Kia Tyler to manage our leads, and the results have been fantastic! Hammer has significantly improved our response times and has been instrumental in booking numerous appointments."
+        },
+        {
+          "@type": "Review",
+          "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+          "author": { "@type": "Person", "name": "Bryce" },
+          "publisher": { "@type": "Organization", "name": "Turpin CDJR" },
+          "reviewBody": "So far a month in we've loved the service. Response time has been sub 5 seconds. AI responses have been very good and the support team and account managers are very easy to get ahold of."
+        }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SoftwareApplication",
+          "name": "Hammer Drive",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "description": "Instantly answers dealership leads from every source by text and voice, follows up until they book, and books the appointment right in the dealership's CRM. Pricing varies by lot size.",
+          "provider": { "@id": "https://www.hammertime.com/#organization" },
+          "url": "https://www.hammertime.com/"
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "Hammer Facebook Ads",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "description": "Runs Facebook and Instagram ads generated from the dealership's own inventory — the cars are the ads — and Hammer answers every lead.",
+          "provider": { "@id": "https://www.hammertime.com/#organization" },
+          "url": "https://www.hammertime.com/",
+          "offers": {
+            "@type": "Offer",
+            "price": "299",
+            "priceCurrency": "USD",
+            "description": "$299/mo + ad spend"
+          }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "MarketPoster",
+          "applicationCategory": "BusinessApplication",
+          "operatingSystem": "Web",
+          "description": "Posts a dealership's whole lot to Facebook Marketplace in one click, with bulk posting and automatic reposting so listings stay on top.",
+          "provider": { "@id": "https://www.hammertime.com/#organization" },
+          "url": "https://www.hammertime.com/",
+          "offers": {
+            "@type": "Offer",
+            "price": "199",
+            "priceCurrency": "USD",
+            "description": "From $199/mo"
+          }
+        }
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What does Hammer do?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Hammer texts your leads instantly and follows up for months. Your team closes the deal."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Hammer replace my BDC?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Hammer handles the first reply and follow-up. Your team closes."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will Hammer work with our CRM?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, Hammer works with the CRM you already have."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How fast can we go live?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most stores go live in under 72 business hours once onboarding and feeds are connected."
+          }
+        }
+      ]
+    }
+    </script>
     <!-- Meta Pixel Code -->
     <script>
       !function(f,b,e,v,n,t,s)

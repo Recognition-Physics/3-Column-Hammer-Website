@@ -81,7 +81,7 @@
 
         
 
-        <div class="nav-panel-layer " hidden="" aria-hidden="true">
+        <div class="nav-panel-layer is-open" aria-hidden="false">
           <div class="nav-panel-backdrop" data-action="close" aria-hidden="true"></div>
           <section class="nav-panel nav-panel--glass" role="dialog" aria-modal="false" aria-label="Navigation panel">
             <div class="nav-panel__shine" aria-hidden="true"></div>
@@ -93,7 +93,7 @@
                   <span class="nav-panel__kicker-dot" aria-hidden="true"></span>
                   Quick tour
                 </span>
-                <span class="nav-panel__h"></span>
+                <span class="nav-panel__h">About Us</span>
               </div>
               <button type="button" class="nav-panel__close" data-action="close" aria-label="Close">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"></path></svg>
@@ -170,7 +170,7 @@
                 <p class="nav-panel__lead nav-panel__lead--contact-email">Email us at <a class="nav-panel__contact-link" href="mailto:support@hammertime.com">support@hammertime.com</a> or call <a class="nav-panel__contact-link" href="tel:+15128831336">(512) 883-1336</a>.</p>
                 <div id="hubspotSupportForm" class="hubspot-support-form" aria-live="polite"></div>
               </div>
-              <div id="navPanelAbout" class="nav-panel__section nav-panel__section--about ">
+              <div id="navPanelAbout" class="nav-panel__section nav-panel__section--about is-active">
                 <p class="nav-panel__lead">Hammer Corp is a software company based in Austin, Texas. We build AI tools that help car dealerships answer leads fast, follow up, and book more appointments, day and night.</p>
                 <p class="nav-panel__lead">Dealers use Hammer to reply to every lead in seconds, keep following up when buyers go quiet, and log everything in the CRM they already use.</p>
                 <p class="nav-panel__lead nav-panel__lead--contact-email">
@@ -495,7 +495,7 @@
         <footer class="site-footer" role="contentinfo">
           <nav class="site-footer__nav" aria-label="Legal and account">
             <div class="site-footer__legal">
-              <a href="/about" class="chrome__jump chrome__jump--panel" data-panel="about" aria-expanded="false" aria-controls="navPanelAbout" id="footerOpenAbout">About Us</a>
+              <a href="/about" class="chrome__jump chrome__jump--panel is-active" data-panel="about" aria-expanded="true" aria-controls="navPanelAbout" id="footerOpenAbout">About Us</a>
               <a href="/terms" class="chrome__jump chrome__jump--panel" data-panel="terms" aria-expanded="false" aria-controls="navPanelTerms" id="footerOpenTerms">Terms of Service</a>
               <a href="/privacy" class="chrome__jump chrome__jump--panel" data-panel="privacy" aria-expanded="false" aria-controls="navPanelPrivacy" id="footerOpenPrivacy">Privacy Policy</a>
             </div>

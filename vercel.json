@@ -15,7 +15,12 @@
     { "source": "/email/:path*", "destination": "/email/:path*" },
     { "source": "/help", "destination": "/help/index.html" },
     { "source": "/help/", "destination": "/help/index.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/(reviews|faq|terms|privacy|support|about)",
+      "destination": "/$1/index.html"
+    },
+    { "source": "/(reviews|faq|terms|privacy|support|about)/", "destination": "/$1/index.html" },
+    { "source": "/get-started", "destination": "/index.html" }
   ],
   "headers": [
     {
