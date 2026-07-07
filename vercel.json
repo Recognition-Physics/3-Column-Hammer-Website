@@ -9,6 +9,9 @@
       "includeFiles": "{wiki/**,knowledge/**,demo/realtime-sales-demo/server/**,demo/realtime-sales-demo/web/src/*.ts,demo/shared/**,raw/hammer-data/**}"
     }
   },
+  "redirects": [
+    { "source": "/legal/privacy", "destination": "/privacy", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index" },
     { "source": "/admin/:path*", "destination": "/api/index" },
