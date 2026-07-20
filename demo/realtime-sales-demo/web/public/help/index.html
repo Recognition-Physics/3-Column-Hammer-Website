@@ -69,7 +69,7 @@
 
     .help-contact-head {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 12px;
     }
 
     .help-contact-head h1 {
@@ -77,30 +77,20 @@
       font-size: clamp(1.6rem, 3.2vw, 2.1rem);
       font-weight: 600;
       color: var(--landing-ink, #0c0f14);
-      margin: 0 0 10px;
-    }
-
-    .help-contact-head p {
-      font-family: var(--font-body, "DM Sans", sans-serif);
-      font-size: 0.9875rem;
-      line-height: 1.55;
-      color: rgba(12, 15, 20, 0.68);
       margin: 0;
     }
 
-    .help-contact-head a {
-      color: var(--landing-red, #c91e1e);
-      font-weight: 600;
-      text-decoration: none;
-    }
-
-    .help-contact-head a:hover {
-      text-decoration: underline;
-    }
-
     #hubspot-form-container {
-      min-height: 120px;
       padding-bottom: 8px;
+    }
+
+    #hubspot-form-container > *:first-child {
+      margin-top: 0 !important;
+    }
+
+    #hubspot-form-container .hs-richtext,
+    #hubspot-form-container .hs-richtext p:first-child {
+      margin-top: 0 !important;
     }
 
     .form-loading {
@@ -108,7 +98,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      min-height: 120px;
+      min-height: 72px;
     }
 
     .form-loading__dot {
@@ -219,11 +209,6 @@
       <div class="help-form-wrap">
         <div class="help-contact-head">
           <h1>Contact Support</h1>
-          <p>
-            Email us at <a href="mailto:support@hammertime.com">support@hammertime.com</a>
-            or call <a href="tel:+15128831336">(512) 883-1336</a> — or send us a message
-            below and our team will get back to you shortly.
-          </p>
         </div>
         <div id="hubspot-form-container" aria-live="polite">
           <div class="form-loading" id="form-loading" aria-label="Loading contact form">
