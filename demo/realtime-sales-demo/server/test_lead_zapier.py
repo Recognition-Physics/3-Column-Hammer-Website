@@ -189,11 +189,11 @@ class LeadZapierPayloadTests(unittest.TestCase):
         payload = build_zapier_payload(body)
         self.assertEqual(payload["productLine"], "marketposter")
         self.assertEqual(payload["seatCount"], "2")
-        self.assertEqual(payload["subscriptionMonthlyAmount"], "249")
+        self.assertEqual(payload["subscriptionMonthlyAmount"], "149")
         self.assertIn("MarketPoster agreement", payload["agreementEmailSubject"])
         self.assertIn("Facebook Market Place Posting", payload["agreementEmailHtml"])
         self.assertIn("Hammer/MarketPoster", payload["agreementEmailHtml"])
-        self.assertIn("$249/month + 2 Users", payload["agreementEmailHtml"])
+        self.assertIn("$149/month + 2 Users", payload["agreementEmailHtml"])
 
     def test_website_lead_payload(self) -> None:
         body = LeadCaptureRequest(

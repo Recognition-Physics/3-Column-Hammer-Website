@@ -49,7 +49,8 @@ FACEBOOK_AIA_META_DAILY_MIN_USD = 15
 
 # MarketPoster seat tiers (USD) — additional seats +$50/mo above tier base
 MARKETPOSTER_ADDITIONAL_USER_MONTHLY_USD = 50
-MARKETPOSTER_TIER_PRICES: tuple[tuple[int, int], ...] = ((1, 199), (3, 299), (5, 599))
+MARKETPOSTER_1_USER_MONTHLY_USD = 99
+MARKETPOSTER_TIER_PRICES: tuple[tuple[int, int], ...] = ((1, 99), (3, 299), (5, 599))
 
 # Hammer Connect standalone (no MarketPoster)
 HAMMER_CONNECT_MONTHLY_USD = 99
@@ -179,9 +180,9 @@ def marketposter_monthly_for_users(user_count: int) -> int:
     """Map seat count to monthly total (tier pricing + $50 per user above tier band)."""
     count = max(1, user_count)
     if count == 1:
-        return 199
+        return MARKETPOSTER_1_USER_MONTHLY_USD
     if count == 2:
-        return 199 + MARKETPOSTER_ADDITIONAL_USER_MONTHLY_USD
+        return MARKETPOSTER_1_USER_MONTHLY_USD + MARKETPOSTER_ADDITIONAL_USER_MONTHLY_USD
     if count <= 3:
         return 299
     if count == 4:

@@ -14,8 +14,8 @@ Same Catch Hook as other products. Filter only on `event` = `agreement_email_req
 
 | Users | Monthly (USD) |
 |-------|----------------|
-| 1 | $199 |
-| 2 | $249 ($199 + $50) |
+| 1 | $99 |
+| 2 | $149 ($99 + $50) |
 | 3 | $299 |
 | 4 | $349 ($299 + $50) |
 | 5 | $599 |

@@ -106,14 +106,15 @@ class HammerAgreementTests(unittest.TestCase):
 
     def test_marketposter_pricing_and_email(self) -> None:
         self.assertTrue(is_marketposter_signup("MarketPoster 2 users"))
-        self.assertEqual(marketposter_monthly_for_users(2), 249)
+        self.assertEqual(marketposter_monthly_for_users(1), 99)
+        self.assertEqual(marketposter_monthly_for_users(2), 149)
         pricing = resolve_marketposter_pricing("MarketPoster", seat_count="2 users")
         assert pricing is not None
-        self.assertEqual(pricing["subscriptionMonthlyDisplay"], "$249/month + 2 Users")
+        self.assertEqual(pricing["subscriptionMonthlyDisplay"], "$149/month + 2 Users")
         html = build_agreement_email_html("Victory Motorsports", pricing)
         self.assertIn("MarketPoster", html)
         self.assertIn("Facebook Market Place Posting", html)
-        self.assertIn("$249/month + 2 Users", html)
+        self.assertIn("$149/month + 2 Users", html)
         self.assertIn("10-vehicle limit per session", html)
         self.assertIn("Hammer/MarketPoster", html)
         self.assertIn("Additional Users $50 monthly", html)
@@ -124,7 +125,7 @@ class HammerAgreementTests(unittest.TestCase):
             "<strong>Your service description:</strong>",
             "<strong>Subscription:</strong>",
             "<strong>Next Payment:</strong>",
-            "<strong>$249</strong>",
+            "<strong>$149</strong>",
             "<strong>CANCELLATION POLICY:</strong>",
             "hammertime.com/help",
             "<em>unsubscribe</em>",
@@ -147,8 +148,8 @@ class HammerAgreementTests(unittest.TestCase):
         self.assertIn("Please reply", blocks[1])
         self.assertIn("Welcome to MarketPoster", blocks[2])
         self.assertIn("Your service description:", blocks[3])
-        self.assertIn("Subscription: $249/month + 2 Users", blocks[3])
-        self.assertIn("You will be charged $249 today", blocks[4])
+        self.assertIn("Subscription: $149/month + 2 Users", blocks[3])
+        self.assertIn("You will be charged $149 today", blocks[4])
         self.assertEqual(blocks[5], "Additional Users $50 monthly")
         self.assertIn("CANCELLATION POLICY", blocks[6])
         self.assertIn("10-vehicle limit", blocks[7])

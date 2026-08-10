@@ -1398,7 +1398,7 @@ const PRODUCT_COL_SPECS: ProductColSpec[] = [
     taglineKey: "rt_product_mp_tagline",
     taglineFallback: "Post your whole lot to Facebook Marketplace in one click.",
     priceKey: "rt_product_mp_price",
-    priceFallback: "From $199/mo",
+    priceFallback: "From $99/mo",
     bullets: [
       { key: "rt_product_mp_b1", fallback: "Never retype price, photos, or VIN." },
       { key: "rt_product_mp_b2", fallback: "Select cars and post in bulk." },

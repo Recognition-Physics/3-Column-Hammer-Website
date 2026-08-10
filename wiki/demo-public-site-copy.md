@@ -322,7 +322,7 @@ Auto-reposts so your listings stay on top.
 
 ## rt_product_mp_price
 
-From $199/mo
+From $99/mo
 
 ## rt_listen_label
 

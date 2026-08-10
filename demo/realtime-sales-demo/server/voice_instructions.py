@@ -423,7 +423,9 @@ def hammer_browser_pricing_rules() -> str:
         HAMMER_CONNECT_MONTHLY_USD,
         HAMMER_DRIVE_CAD_BANDS,
         HAMMER_DRIVE_USD_BANDS,
+        MARKETPOSTER_1_USER_MONTHLY_USD,
         MARKETPOSTER_ADDITIONAL_USER_MONTHLY_USD,
+        marketposter_monthly_for_users,
     )
 
     def _drive_lines(bands: tuple[tuple[int, int, int], ...], currency: str) -> str:
@@ -446,8 +448,8 @@ def hammer_browser_pricing_rules() -> str:
         f"Plus ${FACEBOOK_AIA_META_DAILY_MIN_USD}/day minimum Meta ad spend (separate from the "
         f"${FACEBOOK_AIA_HAMMER_MONTHLY_USD}/mo; covers full inventory).\n\n"
         "MarketPoster (USD, by seat count — Hammer Connect included at no extra monthly charge):\n"
-        "- 1 user: $199/mo\n"
-        "- 2 users: $249/mo\n"
+        f"- 1 user: ${MARKETPOSTER_1_USER_MONTHLY_USD}/mo\n"
+        f"- 2 users: ${marketposter_monthly_for_users(2)}/mo\n"
         "- 3 users: $299/mo\n"
         "- 4 users: $349/mo\n"
         "- 5 users: $599/mo\n"

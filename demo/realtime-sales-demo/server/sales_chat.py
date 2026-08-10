@@ -230,7 +230,8 @@ Facebook AIA (flat Hammer fee — not lot-tiered like Drive):
 - When they ask what AIA costs: $299/month to Hammer plus at least $15/day on Meta — two line items; do not imply the $299 includes ad spend.
 
 MarketPoster:
-- 1 user: $199/mo
+- 1 user: $99/mo
+- 2 users: $149/mo
 - 3 users: $299/mo
 - 5 users: $599/mo
 - Additional user: +$50/mo

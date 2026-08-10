@@ -109,7 +109,7 @@ Facebook AIA is **month-to-month** with two separate charges:
 
 | Seats | Monthly price |
 |-------|--------------|
-| 1 user | $199 |
+| 1 user | $99 |
 | 3 users | $299 |
 | 5 users | $599 |
 | Additional user | +$50 |
