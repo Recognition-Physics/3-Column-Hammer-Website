@@ -2208,20 +2208,21 @@ footer.site-footer a.chrome__jump {
 }
 
 .app-shell--landing .call-me-modal__consent {
-  border: 1px solid var(--cal-line);
+  border: none;
   border-radius: var(--cal-radius);
-  background: var(--cal-bg-muted);
+  background: transparent;
+  padding: 0.25rem 0.1rem;
 }
 
 .app-shell--landing .call-me-modal__consent:has(.call-me-modal__checkbox:checked) {
-  border-color: var(--cal-accent-line);
-  background: var(--cal-accent-soft);
+  border-color: transparent;
+  background: transparent;
 }
 
 .app-shell--landing .call-me-modal__consent-text {
-  font-size: 13px;
+  font-size: 11.5px;
   line-height: 1.5;
-  color: var(--cal-ink);
+  color: var(--cal-faint);
 }
 
 .app-shell--landing .call-me-modal__checkbox {
