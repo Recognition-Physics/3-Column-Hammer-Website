@@ -3201,11 +3201,6 @@ function mount() {
                   required />
                 <span class="call-me-modal__consent-text">${escapeHtml(copy("rt_lead_consent", "I agree to receive automated marketing & account calls and texts from Hammer at this number. Consent isn't required to buy. Frequency varies; msg & data rates may apply. Reply STOP to cancel, HELP for help."))}</span>
               </label>
-              <p class="lead-consent-fineprint__links">
-                <a class="lead-consent-fineprint__link" href="/terms" target="_blank" rel="noopener">${escapeHtml(copy("rt_site_footer_terms", "Terms of Service"))}</a>
-                <span class="lead-consent-fineprint__sep" aria-hidden="true">|</span>
-                <a class="lead-consent-fineprint__link" href="/privacy" target="_blank" rel="noopener">${escapeHtml(copy("rt_site_footer_privacy", "Privacy Policy"))}</a>
-              </p>
               <p id="leadFormStatus" class="lead-form-status" role="status" aria-live="polite"></p>
               <button type="submit" class="lead-submit"${leadConsentChecked ? "" : " disabled"}><span class="lead-submit__label">${escapeHtml(copy("rt_lead_submit", "Yes, sign me up!"))}</span></button>
             </form>
