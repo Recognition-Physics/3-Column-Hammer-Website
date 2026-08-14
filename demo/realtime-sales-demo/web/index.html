@@ -198,6 +198,19 @@
       ]
     }
     </script>
+    <!-- Google tag (gtag.js) — Google Ads conversion tracking -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-16574612743"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'AW-16574612743');
+      // Report "Phone Number Clicks" conversion when a visitor taps a phone link.
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest && e.target.closest('a[href^="tel:"]');
+        if (a) gtag('event', 'conversion', { send_to: 'AW-16574612743/QluJCKuj-bQZEIeKst89' });
+      }, true);
+    </script>
     <!-- Meta Pixel Code -->
     <script>
       !function(f,b,e,v,n,t,s)
