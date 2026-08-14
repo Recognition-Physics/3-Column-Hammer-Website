@@ -3202,7 +3202,7 @@ function mount() {
                 <span class="call-me-modal__consent-text">${escapeHtml(copy("rt_lead_consent", "I agree to receive automated marketing & account calls and texts from Hammer at this number. Consent isn't required to buy. Frequency varies; msg & data rates may apply. Reply STOP to cancel, HELP for help."))}</span>
               </label>
               <p id="leadFormStatus" class="lead-form-status" role="status" aria-live="polite"></p>
-              <button type="submit" class="lead-submit"${leadConsentChecked ? "" : " disabled"}><span class="lead-submit__label">${escapeHtml(copy("rt_lead_submit", "Yes, sign me up!"))}</span></button>
+              <button type="submit" class="lead-submit"${leadConsentChecked ? "" : " disabled"}><span class="lead-submit__label">${escapeHtml(copy("rt_lead_submit", "Get Started"))}</span></button>
             </form>
             <div class="lead-google-badge">
               <div class="lead-google-badge__row">
