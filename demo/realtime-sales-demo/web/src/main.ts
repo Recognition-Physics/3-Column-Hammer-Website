@@ -1134,7 +1134,7 @@ function renderChromeSignUpButton(opts?: { id?: string; extraClass?: string; dat
   const idAttr = opts?.id ? ` id="${opts.id}"` : "";
   const actionAttr = opts?.dataAction ? ` data-action="${opts.dataAction}"` : "";
   return `<button type="button" class="${cls}"${idAttr}${actionAttr} aria-label="${escapeHtml(copy("rt_nav_sign_up_aria", "Sign up for Hammer"))}">
-              ${escapeHtml(copy("rt_nav_cta", "Sign Up"))}            </button>`;
+              ${escapeHtml(copy("rt_nav_cta", "Get Started"))}            </button>`;
 }
 
 function renderChromeLoginLink(extraClass = ""): string {
@@ -1434,7 +1434,7 @@ function renderProductColCard(spec: ProductColSpec, live: boolean, connecting: b
                   <button type="button" class="product-col__signup" data-action="open-sign-up"
                     data-product="${escapeHtml(name)}"
                     aria-label="${escapeHtml(copy("rt_nav_sign_up_aria", "Sign up for Hammer"))}">
-                    ${escapeHtml(copy("rt_nav_cta", "Sign Up"))}
+                    ${escapeHtml(copy("rt_nav_cta", "Get Started"))}
                   </button>
                 </footer>
               </div>
@@ -1598,7 +1598,7 @@ function renderFooterCtaHtml(live: boolean, connecting: boolean): string {
             </button>`;
   }
   return `<button type="button" class="footer-cta__pill" data-action="open-sign-up" aria-label="${escapeHtml(copy("rt_nav_sign_up_aria", "Sign up for Hammer"))}">
-            <span class="footer-cta__pill-label">${escapeHtml(copy("rt_nav_cta", "Sign Up"))}</span>
+            <span class="footer-cta__pill-label">${escapeHtml(copy("rt_nav_cta", "Get Started"))}</span>
             <span class="footer-cta__pill-arrow" aria-hidden="true">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 3.5 13 8l-4.5 4.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </span>
