@@ -42,6 +42,10 @@ Full page contents for AI crawlers: https://www.hammertime.com/llms-full.txt
 - [Hammer vs Podium](https://www.hammertime.com/guides/hammer-vs-podium): Podium is an inbox. Hammer is AI lead response on Marketplace, CarGurus, and ads
 - [Impel Alternatives](https://www.hammertime.com/guides/impel-alternatives): Hammer is the Impel alternative for lead response on the CRM you already have
 - [Podium Alternatives](https://www.hammertime.com/guides/podium-alternatives): Hammer is the Podium alternative when leads still sit
+- [Hammer vs DriveCentric](https://www.hammertime.com/guides/hammer-vs-drivecentric): DriveCentric is a CRM. Hammer is the first-reply layer, including on DriveCentric
+- [Hammer vs Matador](https://www.hammertime.com/guides/hammer-vs-matador): Matador is under-60-second SMS. Hammer is under 5 seconds on every connected channel
+- [Hammer vs Tecobi](https://www.hammertime.com/guides/hammer-vs-tecobi): Tecobi publishes from $1,995/mo plus setup. Hammer starts at $99/mo
+- [Hammer vs Numa](https://www.hammertime.com/guides/hammer-vs-numa): Numa is voice. Hammer is lead response by text in under 5 seconds
 - [Support](https://www.hammertime.com/support): support contact information
 - [Terms](https://www.hammertime.com/terms)
 - [Privacy](https://www.hammertime.com/privacy)
