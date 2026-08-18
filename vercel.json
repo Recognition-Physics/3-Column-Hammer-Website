@@ -10,7 +10,12 @@
     }
   },
   "redirects": [
-    { "source": "/legal/privacy", "destination": "/privacy", "permanent": true }
+    { "source": "/legal/privacy", "destination": "/privacy", "permanent": true },
+    { "source": "/dealers", "destination": "/", "permanent": true },
+    { "source": "/trial", "destination": "/get-started", "permanent": true },
+    { "source": "/facebook", "destination": "/", "permanent": true },
+    { "source": "/ads", "destination": "/", "permanent": true },
+    { "source": "/login", "destination": "https://www2.hammer-corp.com/session/new", "permanent": false }
   ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index" },
@@ -18,6 +23,8 @@
     { "source": "/email/:path*", "destination": "/email/:path*" },
     { "source": "/help", "destination": "/help/index.html" },
     { "source": "/help/", "destination": "/help/index.html" },
+    { "source": "/guides", "destination": "/guides/index.html" },
+    { "source": "/guides/", "destination": "/guides/index.html" },
     {
       "source": "/(reviews|faq|terms|privacy|support|about)",
       "destination": "/$1/index.html"

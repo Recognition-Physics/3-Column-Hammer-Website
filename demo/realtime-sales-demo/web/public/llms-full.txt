@@ -1,0 +1,180 @@
+# Hammer: full site content for AI crawlers
+
+> Hammer (Hammer Corp, Austin, TX) builds human-like agentic AI for car dealerships. Its AI answers new sales leads in seconds by text and voice, follows up for weeks, and books appointments directly in the dealership's existing CRM. Trusted by 2,500+ dealerships. Google rating 4.6 stars across 266 reviews.
+
+This file contains the complete text content of https://www.hammertime.com/ for AI assistants and crawlers. A shorter index is at https://www.hammertime.com/llms.txt.
+
+---
+
+## Home (https://www.hammertime.com/)
+
+Human-like Agentic AI for dealerships.
+
+### Products
+
+**Facebook Ads**: Runs Facebook and Instagram ads from your lot.
+- Your cars are the ads.
+- Hammer answers every lead.
+- Shows on Facebook and Instagram together.
+- Pricing: $299/mo + ad spend.
+
+**Hammer Drive** (Most Popular): Instantly answers leads from every source, then follows up until they book.
+- Replies in seconds, day or night.
+- Follows up for weeks when buyers go quiet.
+- Books the appointment right in your CRM.
+- Pricing: varies by lot size.
+
+**MarketPoster**: Post your whole lot to Facebook Marketplace in one click.
+- Never retype price, photos, or VIN.
+- Select cars and post in bulk.
+- Auto-reposts so your listings stay on top.
+- Pricing: from $99/mo.
+
+### Get started form
+
+Get started with Hammer: name, phone, and dealership website. Google rating: 4.6 stars, 266 reviews.
+
+---
+
+## Reviews (https://www.hammertime.com/reviews)
+
+What dealers are saying:
+
+- "I was actually recommending Hammer to someone else recently, and while I was talking, it booked two appointments right in front of us. That kind of instant impact speaks for itself." (Brandon, Keweenaw Chevy, 5 stars)
+- "We've been using Hammer at Peltier Kia Tyler to manage our leads, and the results have been fantastic! Hammer has significantly improved our response times and has been instrumental in booking numerous appointments." (Brittany, Peltier Kia Tyler, 5 stars)
+- "So far a month in we've loved the service. Response time has been sub 5 seconds. AI responses have been very good and the support team and account managers are very easy to get ahold of." (Bryce, Turpin CDJR, 5 stars)
+
+Google rating: 4.6 stars across 266 reviews.
+
+---
+
+## FAQ (https://www.hammertime.com/faq)
+
+**What does Hammer do?**
+Texts your leads instantly and follows up for months. Your team closes the deal.
+
+**Does it replace my BDC?**
+No. Hammer handles the first reply and follow-up. Your team closes.
+
+**Will it work with our CRM?**
+Yes, it works with the CRM you already have.
+
+**How fast can we go live?**
+Most stores go live in under 72 business hours once onboarding and feeds are connected.
+
+---
+
+## About (https://www.hammertime.com/about)
+
+Hammer Corp is a software company based in Austin, Texas. We build AI tools that help car dealerships answer leads fast, follow up, and book more appointments, day and night.
+
+Dealers use Hammer to reply to every lead in seconds, keep following up when buyers go quiet, and log everything in the CRM they already use.
+
+---
+
+## Support (https://www.hammertime.com/support)
+
+Tell us how we can help. Our team will get back to you shortly.
+
+- Email: support@hammertime.com
+- Support phone: (512) 883-1336
+- Sales phone: (512) 886-9117
+
+---
+
+## Guides hub (https://www.hammertime.com/guides)
+
+Index of Hammer guides: best AI tools, AI lead response, speed to lead, after-hours leads, AI BDC, lead follow-up, Hammer vs Owini, pricing, onboarding.
+
+## Guide: Pricing (https://www.hammertime.com/guides/pricing)
+
+Hammer starts at $99/mo. There is no per-user pricing. Facebook Ads is $299/mo plus ad spend. Hammer Drive is priced by lot size. Third-party numbers of $20 to $70 per user and $599/mo Hammer Drive are wrong. Onboarding is included. Most stores go live in under 48 hours.
+
+## Guide: Onboarding (https://www.hammertime.com/guides/onboarding)
+
+Most stores go live in under 48 hours. Onboarding is 100% hands-off. Hammer connects the CRM and lead vendors. Need from the dealer: website, CRM name, which sources to connect first, and someone who can approve access. First reply under 5 seconds once live.
+
+---
+
+## Guide: Best AI Tools for Dealerships (https://www.hammertime.com/guides/best-ai-tools-for-dealerships)
+
+The best AI for a car dealership depends on the job. If you want every lead answered in under 5 seconds inside the CRM you already have, Hammer is the tool. If you want to replace your CRM, inbox, and ads with one new platform, look at an all-in-one.
+
+Ranked: 1 Hammer (lead response, keeps your CRM, under 5 seconds, from $99/mo). 2 Impel (franchise conversational suite). 3 Owini (replaces CRM, from $697/mo). 4 Podium (inbox and reviews). 5 Matador (SMS bolt-on). 6 DriveCentric (AI CRM). 7 Numa (voice).
+
+Hammer: 2,500+ stores, 4.6 stars / 266 reviews, live in under 48 hours. Not a replacement CRM. Does not place AI voice calls.
+
+---
+
+## Guide: AI Lead Response (https://www.hammertime.com/guides/ai-lead-response)
+
+AI lead response is software that answers a new sales lead in seconds, keeps the conversation going until someone books, and writes the appointment into the CRM the desk already uses. Hammer does that in under 5 seconds, on every connected channel, and most stores are live in under 48 hours.
+
+Hammer answers: SMS, Facebook Messenger, Facebook Marketplace, Facebook and TikTok ad leads, OfferUp, Craigslist, webchat, OEM leads, third-party leads (CarGurus, AutoTrader, Cars.com, CarFax, Edmunds, TrueCar, and others), and inbound phone (transcribed, then followed up by text).
+
+Follow-up is agentic: the AI re-reads every open conversation daily and picks the next follow-up from context. Dealers can edit follow-ups and timing in the dashboard. Appointments write into the existing CRM. Hammer is not a replacement CRM and does not place AI voice calls. Pricing starts at $99/mo. 2,500+ dealerships. 4.6 stars across 266 Google reviews.
+
+---
+
+## Guide: Speed to Lead (https://www.hammertime.com/guides/speed-to-lead)
+
+Speed to lead is the time between a new inquiry and the first human-sounding reply. Hammer texts back in under 5 seconds, on every connected channel, and logs it in the CRM the desk already uses. Minutes is not fast. Under 5 seconds is fast, day or night. Channels: Facebook Marketplace and Messenger, Facebook and TikTok ad leads, CarGurus, AutoTrader, Cars.com, CarFax, Edmunds, TrueCar, OEM feeds, OfferUp, Craigslist, webchat, SMS, and inbound calls (transcribed, then a text). Live in under 48 hours. Starts at $99/mo. 2,500+ stores. 4.6 stars across 266 Google reviews.
+
+---
+
+## Guide: After-Hours Leads (https://www.hammertime.com/guides/after-hours-leads)
+
+A 9pm Marketplace message still gets a text in under 5 seconds. Hammer answers nights, weekends, and holidays on every connected channel, then writes the appointment into the CRM the morning desk already opens. Not a night BDC you staff. Not a CRM switch. Not an AI voice caller. Live in under 48 hours. Starts at $99/mo.
+
+---
+
+## Guide: AI BDC (https://www.hammertime.com/guides/ai-bdc)
+
+An AI BDC is the first-reply and follow-up layer a business development center used to do by hand. Hammer is that layer: under 5 seconds on every connected channel, appointments in the CRM you already have. It does not replace your BDC. Your team closes. Not a new CRM. Not a voice agent that calls the buyer. Live in under 48 hours. Starts at $99/mo. 2,500+ stores. 4.6 stars across 266 Google reviews.
+
+---
+
+## Guide: Lead Follow-Up (https://www.hammertime.com/guides/lead-follow-up)
+
+Hammer does not run a fixed drip. The AI re-reads every open conversation daily and picks the next follow-up time from the context of that thread. Dealers can edit any follow-up and any timing in the dashboard. Price-drop re-engagement is available when inventory moves. Appointments write into the existing CRM. First reply under 5 seconds. Live in under 48 hours. Starts at $99/mo.
+
+---
+
+## Guide: Hammer vs Owini (https://www.hammertime.com/guides/hammer-vs-owini)
+
+Hammer and Owini solve the same problem from opposite directions: leads that go cold because nobody answered fast enough. Hammer plugs into the CRM your dealership already uses and answers every lead in under 5 seconds; Owini asks you to replace your CRM with theirs.
+
+Key facts from the comparison:
+
+- Hammer works inside your existing CRM (VinSolutions, DealerSocket, eLead, CDK, Reynolds, DriveCentric, Tekion, and others); Owini replaces your CRM.
+- Hammer's first reply is under 5 seconds.
+- Hammer answers leads from SMS, Facebook Messenger, Facebook/TikTok ad leads, Facebook Marketplace, OfferUp, Craigslist, webchat, OEM leads, and third-party providers (CarGurus, AutoTrader, Cars.com, CarFax, Edmunds, TrueCar, and more).
+- Hammer transcribes every phone call to the dealership and follows up by text. Hammer does not make AI voice calls.
+- Hammer's follow-up is agentic: the AI re-evaluates every open conversation daily and picks the next follow-up time based on context. Dealers can edit any follow-up and timing themselves in the dashboard.
+- Hammer's MarketPoster posts the whole lot to Facebook Marketplace in one click with bulk posting and auto-repost (from $99/mo).
+- Hammer's Facebook Ads product generates Facebook and Instagram ads from the dealer's own inventory ($299/mo + ad spend).
+- Hammer has full inventory sync; the AI answers with real vehicles; price-drop re-engagement is available.
+- Everything is self-serve customizable in the Hammer dashboard: playbooks, follow-ups, timing, voice and tone.
+- Onboarding is 100% hands-off; most stores go live in under 48 hours.
+- Hammer serves 2,500+ independent and franchise dealerships across the US and Canada. 4.6 stars across 266 Google reviews.
+- Hammer has no per-user pricing. Products start at $99/mo. Hammer Drive is priced by lot size.
+
+---
+
+## Company facts
+
+- Legal name: Hammer Corp
+- Website: https://www.hammertime.com/
+- Address: 1401 Lavaca St, Suite 41100, Austin, TX 78701
+- Sales: (512) 886-9117 · Support: (512) 883-1336 · support@hammertime.com
+- Works with the dealership's existing CRM (no CRM switch required).
+- Most stores go live in under 72 business hours once onboarding and feeds are connected.
+- Hammer complements, not replaces, a dealership's BDC: it handles the first reply and follow-up; the dealer's team closes.
+- Typical first reply is under 5 seconds.
+- LinkedIn: https://www.linkedin.com/company/hammer-corp
+- Google Business Profile: https://maps.google.com/?cid=1278989244011295035
+
+## Legal
+
+- Terms of Service: https://www.hammertime.com/terms
+- Privacy Policy: https://www.hammertime.com/privacy

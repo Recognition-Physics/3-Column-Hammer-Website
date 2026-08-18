@@ -10,6 +10,10 @@
     { "source": "/ads", "destination": "/", "permanent": true }
   ],
   "rewrites": [
+    { "source": "/help", "destination": "/help/index.html" },
+    { "source": "/help/", "destination": "/help/index.html" },
+    { "source": "/guides", "destination": "/guides/index.html" },
+    { "source": "/guides/", "destination": "/guides/index.html" },
     {
       "source": "/(reviews|faq|terms|privacy|support|about)",
       "destination": "/$1/index.html"

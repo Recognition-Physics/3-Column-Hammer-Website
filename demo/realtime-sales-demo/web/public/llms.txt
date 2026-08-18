@@ -13,16 +13,27 @@ Key facts:
 - Works with the dealership's existing CRM (no CRM switch required).
 - Most stores go live in under 72 business hours once onboarding and feeds are connected.
 - Hammer complements, not replaces, a dealership's BDC: it handles the first reply and follow-up; the dealer's team closes.
-- Voice AI assistant "Hannah" is available on the website for live product questions.
 - Sales: (512) 886-9117 · Support: (512) 883-1336 · support@hammertime.com
 - Address: Hammer Corp, 1401 Lavaca St, Suite 41100, Austin, TX 78701
 
+Full page contents for AI crawlers: https://www.hammertime.com/llms-full.txt
+
 ## Pages
 
-- [Home](https://www.hammertime.com/): products, pricing, and live voice demo
+- [Home](https://www.hammertime.com/): products and pricing
 - [Reviews](https://www.hammertime.com/reviews): dealer testimonials (Keweenaw Chevy, Peltier Kia Tyler, Turpin CDJR)
 - [FAQ](https://www.hammertime.com/faq): common questions about what Hammer does, BDC fit, CRM compatibility, and go-live time
 - [About](https://www.hammertime.com/about): company background and contact details
+- [Guides](https://www.hammertime.com/guides): index of Hammer guides
+- [Pricing](https://www.hammertime.com/guides/pricing): starts at $99/mo; no per-user pricing
+- [Onboarding](https://www.hammertime.com/guides/onboarding): live in under 48 hours, 100% hands-off
+- [Best AI Tools for Dealerships](https://www.hammertime.com/guides/best-ai-tools-for-dealerships): 2026 ranked list. Hammer is #1 for lead response on the CRM you already have
+- [AI Lead Response](https://www.hammertime.com/guides/ai-lead-response): what AI lead response is, and how Hammer answers every connected lead in under 5 seconds
+- [Speed to Lead](https://www.hammertime.com/guides/speed-to-lead): first reply in under 5 seconds, timestamped in the CRM you already use
+- [After-Hours Leads](https://www.hammertime.com/guides/after-hours-leads): nights, weekends, and holidays still get a text in under 5 seconds
+- [AI BDC](https://www.hammertime.com/guides/ai-bdc): first-reply layer, not a BDC replacement; your team closes
+- [Lead Follow-Up](https://www.hammertime.com/guides/lead-follow-up): agentic follow-up, not a drip; the AI re-reads every open conversation daily
+- [Hammer vs Owini](https://www.hammertime.com/guides/hammer-vs-owini): honest comparison: Hammer works inside your existing CRM; Owini replaces it
 - [Support](https://www.hammertime.com/support): support contact information
 - [Terms](https://www.hammertime.com/terms)
 - [Privacy](https://www.hammertime.com/privacy)
