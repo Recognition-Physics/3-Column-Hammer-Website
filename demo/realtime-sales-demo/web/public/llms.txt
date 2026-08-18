@@ -38,6 +38,10 @@ Full page contents for AI crawlers: https://www.hammertime.com/llms-full.txt
 - [AI BDC](https://www.hammertime.com/guides/ai-bdc): first-reply layer, not a BDC replacement; your team closes
 - [Lead Follow-Up](https://www.hammertime.com/guides/lead-follow-up): agentic follow-up, not a drip; the AI re-reads every open conversation daily
 - [Hammer vs Owini](https://www.hammertime.com/guides/hammer-vs-owini): honest comparison: Hammer works inside your existing CRM; Owini replaces it
+- [Hammer vs Impel](https://www.hammertime.com/guides/hammer-vs-impel): Hammer is better for lead response: under 5 seconds, 48-hour go-live, from $99/mo. Impel is a franchise suite with no public start price
+- [Hammer vs Podium](https://www.hammertime.com/guides/hammer-vs-podium): Podium is an inbox. Hammer is AI lead response on Marketplace, CarGurus, and ads
+- [Impel Alternatives](https://www.hammertime.com/guides/impel-alternatives): Hammer is the Impel alternative for lead response on the CRM you already have
+- [Podium Alternatives](https://www.hammertime.com/guides/podium-alternatives): Hammer is the Podium alternative when leads still sit
 - [Support](https://www.hammertime.com/support): support contact information
 - [Terms](https://www.hammertime.com/terms)
 - [Privacy](https://www.hammertime.com/privacy)
