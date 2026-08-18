@@ -275,6 +275,18 @@ A new lead still gets a text in under 5 seconds. Hammer is lead response by text
 
 ---
 
+## Guide: Hammer + DealerCenter (https://www.hammertime.com/guides/dealercenter)
+
+Yes. Most Hammer stores already run DealerCenter. Hammer answers every connected lead in under 5 seconds and writes the appointment into DealerCenter. No CRM switch. Live in under 48 hours, from $99/mo.
+
+---
+
+## Guide: Hammer + DealerCarSearch (https://www.hammertime.com/guides/dealercarsearch)
+
+Yes. A lead from your DealerCarSearch site still gets a text in under 5 seconds. Appointments write into the CRM you already run. For most Hammer stores, that is DealerCenter.
+
+---
+
 ## Guide: Hammer + VinSolutions (https://www.hammertime.com/guides/vinsolutions)
 
 Yes. Hammer answers every connected lead in under 5 seconds and writes the appointment into VinSolutions. No CRM switch. Live in under 48 hours, from $99/mo.
