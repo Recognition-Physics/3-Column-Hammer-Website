@@ -7,7 +7,15 @@
     { "source": "/dealers", "destination": "/", "permanent": true },
     { "source": "/trial", "destination": "/get-started", "permanent": true },
     { "source": "/facebook", "destination": "/", "permanent": true },
-    { "source": "/ads", "destination": "/", "permanent": true }
+    { "source": "/ads", "destination": "/", "permanent": true },
+    { "source": "/guides/dealercenter", "destination": "/guides/dealercenter-compatible-ai", "permanent": true },
+    { "source": "/guides/dealercenter/", "destination": "/guides/dealercenter-compatible-ai", "permanent": true },
+    { "source": "/guides/dealercenter-ai", "destination": "/guides/dealercenter-compatible-ai", "permanent": true },
+    { "source": "/guides/dealercenter-ai/", "destination": "/guides/dealercenter-compatible-ai", "permanent": true },
+    { "source": "/guides/dealercenter-compatable-ai", "destination": "/guides/dealercenter-compatible-ai", "permanent": true },
+    { "source": "/guides/dealercenter-compatable-ai/", "destination": "/guides/dealercenter-compatible-ai", "permanent": true },
+    { "source": "/guides/best-ai-for-dealercenter", "destination": "/guides/dealercenter-compatible-ai", "permanent": true },
+    { "source": "/guides/best-ai-for-dealercenter/", "destination": "/guides/dealercenter-compatible-ai", "permanent": true }
   ],
   "rewrites": [
     { "source": "/help", "destination": "/help/index.html" },

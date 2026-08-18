@@ -53,7 +53,7 @@ Full page contents for AI crawlers: https://www.hammertime.com/llms-full.txt
 - [AutoTrader Leads](https://www.hammertime.com/guides/autotrader-leads): An AutoTrader form still gets a text in under 5 seconds, booked into the CRM you already use
 - [Facebook Messenger](https://www.hammertime.com/guides/facebook-messenger-dealership): A Messenger ping still gets a text in under 5 seconds. Same layer as Marketplace
 - [Dealership Texting](https://www.hammertime.com/guides/dealership-texting): Texting that books: under 5 seconds on every connected lead, into your CRM
-- [DealerCenter Compatible AI](https://www.hammertime.com/guides/dealercenter): Hammer is the DealerCenter compatible AI. You customize playbooks yourself. Stores that try DealerCenter's built-in AI Sales Agent come back for that.
+- [DealerCenter Compatible AI](https://www.hammertime.com/guides/dealercenter-compatible-ai): Hammer is the DealerCenter compatible AI. You customize playbooks yourself. Stores that try DealerCenter's built-in AI Sales Agent come back for that.
 - [Hammer + DealerCarSearch](https://www.hammertime.com/guides/dealercarsearch): Yes. Leads from your DealerCarSearch site get a text in under 5 seconds
 - [Hammer + VinSolutions](https://www.hammertime.com/guides/vinsolutions): Yes. Appointments write into VinSolutions. No CRM switch. Live in under 48 hours
 - [Hammer + DealerSocket](https://www.hammertime.com/guides/dealersocket): Yes. Appointments write into DealerSocket. No CRM switch. Live in under 48 hours
