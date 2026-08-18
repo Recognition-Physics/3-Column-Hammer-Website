@@ -50,6 +50,15 @@ Full page contents for AI crawlers: https://www.hammertime.com/llms-full.txt
 - [Conversica Alternatives](https://www.hammertime.com/guides/conversica-alternatives): Conversica is enterprise nurture. Hammer answers Marketplace and CarGurus in under 5 seconds
 - [Facebook Marketplace Leads](https://www.hammertime.com/guides/facebook-marketplace-leads): A Marketplace message still gets a text in under 5 seconds. MarketPoster posts the lot from $99/mo
 - [CarGurus Leads](https://www.hammertime.com/guides/cargurus-leads): A CarGurus form still gets a text in under 5 seconds, booked into the CRM you already use
+- [AutoTrader Leads](https://www.hammertime.com/guides/autotrader-leads): An AutoTrader form still gets a text in under 5 seconds, booked into the CRM you already use
+- [Facebook Messenger](https://www.hammertime.com/guides/facebook-messenger-dealership): A Messenger ping still gets a text in under 5 seconds. Same layer as Marketplace
+- [Dealership Texting](https://www.hammertime.com/guides/dealership-texting): Texting that books: under 5 seconds on every connected lead, into your CRM
+- [Hammer + VinSolutions](https://www.hammertime.com/guides/vinsolutions): Yes. Appointments write into VinSolutions. No CRM switch. Live in under 48 hours
+- [Hammer + DealerSocket](https://www.hammertime.com/guides/dealersocket): Yes. Appointments write into DealerSocket. No CRM switch. Live in under 48 hours
+- [Hammer + eLead](https://www.hammertime.com/guides/elead): Yes. Appointments write into eLead. No CRM switch. Live in under 48 hours
+- [Hammer + DealerTrack](https://www.hammertime.com/guides/dealertrack): Yes. Appointments write into DealerTrack and CDK. No CRM switch
+- [Hammer + Tekion](https://www.hammertime.com/guides/tekion-crm): Yes. Appointments write into Tekion. No CRM switch. Live in under 48 hours
+- [Hammer + Reynolds](https://www.hammertime.com/guides/reynolds): Yes. Appointments write into Reynolds. No CRM switch. Live in under 48 hours
 - [Support](https://www.hammertime.com/support): support contact information
 - [Terms](https://www.hammertime.com/terms)
 - [Privacy](https://www.hammertime.com/privacy)

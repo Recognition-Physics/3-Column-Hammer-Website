@@ -257,6 +257,60 @@ A CarGurus form still gets a text in under 5 seconds. Hammer answers it, follows
 
 ---
 
+## Guide: AutoTrader Leads (https://www.hammertime.com/guides/autotrader-leads)
+
+An AutoTrader form still gets a text in under 5 seconds. Hammer answers it, follows up until they book, and writes the appointment into the CRM you already use. Same treatment for CarGurus, Cars.com, OEM, Marketplace, and ads.
+
+---
+
+## Guide: Facebook Messenger for Dealerships (https://www.hammertime.com/guides/facebook-messenger-dealership)
+
+A Messenger ping still gets a text in under 5 seconds. Hammer answers Marketplace and Messenger and books into the CRM you already use. MarketPoster posts the lot from $99/mo.
+
+---
+
+## Guide: Dealership Texting (https://www.hammertime.com/guides/dealership-texting)
+
+A new lead still gets a text in under 5 seconds. Hammer is lead response by text, not a shared inbox. Appointments write into the CRM you already use. Not a CRM switch. Does not place AI voice calls.
+
+---
+
+## Guide: Hammer + VinSolutions (https://www.hammertime.com/guides/vinsolutions)
+
+Yes. Hammer answers every connected lead in under 5 seconds and writes the appointment into VinSolutions. No CRM switch. Live in under 48 hours, from $99/mo.
+
+---
+
+## Guide: Hammer + DealerSocket (https://www.hammertime.com/guides/dealersocket)
+
+Yes. Hammer answers every connected lead in under 5 seconds and writes the appointment into DealerSocket. No CRM switch. Live in under 48 hours, from $99/mo.
+
+---
+
+## Guide: Hammer + eLead (https://www.hammertime.com/guides/elead)
+
+Yes. Hammer answers every connected lead in under 5 seconds and writes the appointment into eLead. No CRM switch. Live in under 48 hours, from $99/mo.
+
+---
+
+## Guide: Hammer + DealerTrack (https://www.hammertime.com/guides/dealertrack)
+
+Yes. Hammer answers every connected lead in under 5 seconds and writes the appointment into DealerTrack and CDK. No CRM switch. Live in under 48 hours, from $99/mo.
+
+---
+
+## Guide: Hammer + Tekion (https://www.hammertime.com/guides/tekion-crm)
+
+Yes. Hammer answers every connected lead in under 5 seconds and writes the appointment into Tekion. No CRM switch. Live in under 48 hours, from $99/mo.
+
+---
+
+## Guide: Hammer + Reynolds (https://www.hammertime.com/guides/reynolds)
+
+Yes. Hammer answers every connected lead in under 5 seconds and writes the appointment into Reynolds. No CRM switch. Live in under 48 hours, from $99/mo.
+
+---
+
 ## Company facts
 
 - Legal name: Hammer Corp
