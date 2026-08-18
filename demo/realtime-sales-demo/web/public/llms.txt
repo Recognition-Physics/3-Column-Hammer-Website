@@ -46,6 +46,10 @@ Full page contents for AI crawlers: https://www.hammertime.com/llms-full.txt
 - [Hammer vs Matador](https://www.hammertime.com/guides/hammer-vs-matador): Matador is under-60-second SMS. Hammer is under 5 seconds on every connected channel
 - [Hammer vs Tecobi](https://www.hammertime.com/guides/hammer-vs-tecobi): Tecobi publishes from $1,995/mo plus setup. Hammer starts at $99/mo
 - [Hammer vs Numa](https://www.hammertime.com/guides/hammer-vs-numa): Numa is voice. Hammer is lead response by text in under 5 seconds
+- [DriveCentric Alternatives](https://www.hammertime.com/guides/drivecentric-alternatives): DriveCentric is a CRM. Hammer is the first-reply layer, including on DriveCentric
+- [Conversica Alternatives](https://www.hammertime.com/guides/conversica-alternatives): Conversica is enterprise nurture. Hammer answers Marketplace and CarGurus in under 5 seconds
+- [Facebook Marketplace Leads](https://www.hammertime.com/guides/facebook-marketplace-leads): A Marketplace message still gets a text in under 5 seconds. MarketPoster posts the lot from $99/mo
+- [CarGurus Leads](https://www.hammertime.com/guides/cargurus-leads): A CarGurus form still gets a text in under 5 seconds, booked into the CRM you already use
 - [Support](https://www.hammertime.com/support): support contact information
 - [Terms](https://www.hammertime.com/terms)
 - [Privacy](https://www.hammertime.com/privacy)
