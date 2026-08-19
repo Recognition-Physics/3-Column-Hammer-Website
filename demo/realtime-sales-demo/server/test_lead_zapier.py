@@ -207,7 +207,37 @@ class LeadZapierPayloadTests(unittest.TestCase):
         payload = build_zapier_payload(body)
         self.assertEqual(payload["event"], "website_lead")
         self.assertEqual(payload["leadSource"], "website form")
+        self.assertNotIn("gclid", payload)
+        self.assertNotIn("hsAnalyticsSource", payload)
         self.assertNotIn("agreementEmailHtml", payload)
+
+    def test_website_lead_google_ads_attribution(self) -> None:
+        body = LeadCaptureRequest(
+            name="Bob",
+            phone="+1 555 987 6543",
+            email="bob@test.com",
+            website="testdealer.com",
+            role="sales-manager",
+            channel="website",
+            gclid="Cj0KCQjw-abc123",
+            utm_source="google",
+            utm_medium="cpc",
+            utm_campaign="search-dealers-2026",
+            utm_term="hammer ai",
+        )
+        payload = build_zapier_payload(body)
+        self.assertEqual(payload["leadSource"], "google ads")
+        self.assertEqual(payload["gclid"], "Cj0KCQjw-abc123")
+        self.assertEqual(payload["hsGoogleClickId"], "Cj0KCQjw-abc123")
+        self.assertEqual(payload["utmSource"], "google")
+        self.assertEqual(payload["utmMedium"], "cpc")
+        self.assertEqual(payload["utmCampaign"], "search-dealers-2026")
+        self.assertEqual(payload["utmTerm"], "hammer ai")
+        self.assertEqual(payload["hsAnalyticsSource"], "PAID_SEARCH")
+        self.assertEqual(payload["hsAnalyticsSourceData1"], "google")
+        self.assertEqual(payload["hsAnalyticsSourceData2"], "hammer ai")
+        self.assertIn("Source: Google Ads", payload["notes"])
+        self.assertIn("Term: hammer ai", payload["notes"])
 
     def test_website_lead_minimal_fields(self) -> None:
         body = LeadCaptureRequest(

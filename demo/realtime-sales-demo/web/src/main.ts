@@ -1,5 +1,4 @@
-﻿import "./style.css";
-import "./pplx-theme.css";
+import "./style.css";
 import "./landing-hero.css";
 import "./cal-minimal-theme.css";
 import "./landing-responsive.css";
@@ -28,6 +27,9 @@ import {
   type VoiceVisualizerHandle,
 } from "./voice-audio-visualizer";
 import { HAMMER_SALES_INSTRUCTIONS } from "./hammer-sales-instructions";
+import { captureLeadAttribution, leadAttributionFields } from "./lead-attribution";
+
+captureLeadAttribution();
 
 /** Voice scenario — Hammer sales instructions only. */
 type VoiceScenario = "hammer";
@@ -147,14 +149,13 @@ function salesPhone(): { display: string; tel: string; href: string } {
   return { display, tel, href: `tel:${tel}` };
 }
 
-/** Phone-first landing CTA (same locally and on hammer-finalsite). Browser WebRTC only when `VITE_ENABLE_BROWSER_VOICE=1`. */
-const BROWSER_VOICE_ENABLED = envTruthy(
-  (import.meta as ImportMeta & { env: Record<string, string | undefined> }).env
-    .VITE_ENABLE_BROWSER_VOICE,
-);
-
-/** Nav modals always offer in-panel browser voice (no phone redirect). */
-const NAV_PANEL_VOICE_ENABLED = true;
+/**
+ * Live voice demo retired (Aug 2026) — both flags stay false so no voice UI
+ * renders and the ElevenLabs SDK is never fetched (was ignoring
+ * VITE_ENABLE_BROWSER_VOICE on purpose; flip these to re-enable).
+ */
+const BROWSER_VOICE_ENABLED = false;
+const NAV_PANEL_VOICE_ENABLED = false;
 /** Home product cards — same browser voice as nav panels (not gated on VITE_ENABLE_BROWSER_VOICE). */
 const PRODUCT_COL_VOICE_ENABLED = NAV_PANEL_VOICE_ENABLED || BROWSER_VOICE_ENABLED;
 const NAV_PANEL_FOOT_TAP_MS = 340;
@@ -162,6 +163,18 @@ const NAV_PANEL_FOOT_TAP_MS = 340;
 const REDUCE_MOTION =
   typeof window !== "undefined" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/** Phones / Save-Data: skip idle voice SDK fetch. Voice buttons still prewarm on tap. */
+function preferLightMobileNetwork(): boolean {
+  if (typeof navigator === "undefined") return false;
+  const connection = (navigator as Navigator & { connection?: { saveData?: boolean } })
+    .connection;
+  if (connection?.saveData) return true;
+  return window.matchMedia("(max-width: 719px), (pointer: coarse)").matches;
+}
+
+const REVIEWS_YOUTUBE_EMBED =
+  "https://www.youtube.com/embed/kcQufq_YC_Y?autoplay=1&mute=1&controls=0&modestbranding=1&playsinline=1&rel=0&iv_load_policy=3&disablekb=1&fs=0";
 const navPanelFootHintAnims = new WeakMap<Element, Animation>();
 
 function cancelNavPanelFootHint(btn: HTMLElement | null | undefined): void {
@@ -408,7 +421,9 @@ let outboundConsentChecked = false;
 let outboundPollTimer: ReturnType<typeof setInterval> | null = null;
 
 function outboundCallMePrimary(): boolean {
-  return telephonyOutbound.enabled;
+  // Hannah voice demo retired — never surface the outbound "call me" flow,
+  // even if the backend reports outbound telephony as enabled.
+  return false;
 }
 
 function outboundCallbackPollUrl(cid: string): string {
@@ -426,8 +441,8 @@ function stopOutboundPoll(): void {
 function callMeModalHint(): string {
   const phone =
     demoPhoneInfo().display ||
-    copy("rt_demo_phone_display", "").trim() ||
-    copy("rt_demo_phone", "").trim() ||
+    copyUntracked("rt_demo_phone_display", "").trim() ||
+    copyUntracked("rt_demo_phone", "").trim() ||
     "our demo line";
   const template = copy(
     "rt_call_me_modal_hint",
@@ -543,16 +558,20 @@ function demoPhoneInfo(): { display: string; tel: string; href: string } {
   // Prefer /api/health (Vercel/Fly env) over wiki so the dial link matches deployed Twilio config.
   const display =
     healthDemoPhone.display ||
-    copy("rt_demo_phone_display", "").trim() ||
-    copy("rt_demo_phone", "").trim() ||
+    copyUntracked("rt_demo_phone_display", "").trim() ||
+    copyUntracked("rt_demo_phone", "").trim() ||
     envPhone ||
     "";
   const telRaw =
     healthDemoPhone.tel ||
-    copy("rt_demo_phone_tel", "").trim() ||
+    copyUntracked("rt_demo_phone_tel", "").trim() ||
     envPhone ||
     display;
-  const digits = telRaw.replace(/\D/g, "");
+  const rawDigits = telRaw.replace(/\D/g, "");
+  // US numbers need the country code: a 10-digit env/wiki value would produce
+  // an invalid href like tel:+7372056753 (+7 is not the US), which the
+  // telephony API later "corrects" — triggering a needless full re-render.
+  const digits = rawDigits.length === 10 ? `1${rawDigits}` : rawDigits;
   const href = digits ? `tel:+${digits}` : "";
   const shown = display || (digits ? formatUsPhoneDisplay(digits) : "");
   return { display: shown, tel: digits, href };
@@ -970,6 +989,8 @@ let voiceUiRefresh: (() => void) | null = null;
 
 let uiState: "idle" | "connecting" | "live" | "error" = "idle";
 let statusText = "";
+/** Set by mount() so the boot sequence can re-render once late-arriving site copy lands. */
+let postBootRender: (() => void) | null = null;
 let errorDetail = "";
 let session: Conversation | null = null;
 /** True while model TTS/audio output is generating (RealtimeSession audio_startâ†’audio_stopped). */
@@ -1200,9 +1221,46 @@ function withoutEmDash(text: string): string {
     .trim();
 }
 
+/**
+ * Every copy() call is recorded so the post-fetch boot step can tell whether the
+ * server copy would actually change anything on screen. If not, the second full
+ * re-render is skipped — that rebuild was resetting LCP several seconds late.
+ */
+const renderedCopyLog = new Map<string, string>();
+
 function copy(key: string, fallback: string): string {
   const v = siteCopy[key]?.trim();
+  const out = withoutEmDash(v || fallback);
+  renderedCopyLog.set(`${key}\u0000${fallback}`, out);
+  return out;
+}
+
+/**
+ * copy() without staleness logging — for the demo-phone keys consumed by
+ * demoPhoneInfo()/callMeModalHint(). Those resolve through env fallbacks, so
+ * raw values routinely go from "" to the same number the env already provided;
+ * real phone changes are caught by the boot phone-config snapshot instead.
+ */
+function copyUntracked(key: string, fallback: string): string {
+  const v = siteCopy[key]?.trim();
   return withoutEmDash(v || fallback);
+}
+
+/** True if any previously rendered copy string would render differently now. */
+function renderedCopyIsStale(): boolean {
+  return staleCopyKeys().length > 0;
+}
+
+function staleCopyKeys(): string[] {
+  const stale: string[] = [];
+  for (const [logKey, prev] of renderedCopyLog) {
+    const sep = logKey.indexOf("\u0000");
+    const key = logKey.slice(0, sep);
+    const fallback = logKey.slice(sep + 1);
+    const v = siteCopy[key]?.trim();
+    if (withoutEmDash(v || fallback) !== prev) stale.push(key);
+  }
+  return stale;
 }
 
 /** Wrap a phrase in a hero emphasis span (escaped). */
@@ -1634,56 +1692,9 @@ function renderPhonePrimaryPillHtml(phone: { display: string; tel: string; href:
             </button>`;
 }
 
+/** Hannah voice demo retired — the outbound "call me" modal no longer ships. */
 function renderCallMeModalHtml(): string {
-  const busy = outboundCallUi === "calling";
-  const submitLabel = busy
-    ? copy("rt_call_me_submitting", "Calling…")
-    : copy("rt_call_me_submit", "Call me");
-  const consentLabel = copy(
-    "rt_call_me_consent",
-    "I agree to an automated call from Hammer. Not required to purchase.",
-  );
-  return `<div class="lead-modal-layer call-me-modal-layer${callMeModalOpen ? " is-open" : ""}" aria-hidden="${callMeModalOpen ? "false" : "true"}">
-          <div class="lead-modal-backdrop" data-call-me-close tabindex="-1" aria-hidden="true"></div>
-          <div
-            class="lead-modal call-me-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="callMeModalTitle"
-            aria-describedby="callMeModalDesc"
-            id="callMeModalDialog">
-            <button type="button" class="lead-modal__close" data-call-me-close aria-label="${escapeHtml(copy("rt_lead_modal_close_aria", "Close"))}">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
-            </button>
-            <header class="call-me-modal__header">
-              <p class="call-me-modal__eyebrow">${escapeHtml(copy("rt_call_me_modal_eyebrow", "Phone demo"))}</p>
-              <h2 id="callMeModalTitle" class="lead-modal__title call-me-modal__title">${escapeHtml(copy("rt_call_me_modal_title", "Take the Challenge"))}</h2>
-              <p id="callMeModalDesc" class="call-me-modal__subtitle">${escapeHtml(copy("rt_call_me_modal_sub", "Hannah calls in seconds. You're the buyer. Push back and see if she sells you the pen."))}</p>
-            </header>
-            <form class="lead-modal__form call-me-modal__form" id="callMeForm" novalidate>
-              <label class="lead-field">
-                <span class="lead-field__label">${escapeHtml(copy("rt_call_me_phone_label", "Your phone number"))} <span class="lead-req" aria-hidden="true">*</span></span>
-                <input type="tel" name="phone" id="callMePhone" class="lead-input" autocomplete="tel" required inputmode="tel" maxlength="32"
-                  placeholder="${escapeHtml(copy("rt_call_me_phone_ph", "(555) 010-1234"))}"
-                  value="${escapeHtml(outboundPhoneDraft)}"
-                  ${busy ? "disabled" : ""}
-                  aria-required="true" />
-              </label>
-              <label class="call-me-modal__consent">
-                <input type="checkbox" class="call-me-modal__checkbox" id="callMeConsent" name="consent"
-                  ${outboundConsentChecked ? "checked" : ""}
-                  ${busy ? "disabled" : ""}
-                  required />
-                <span class="call-me-modal__consent-text">${escapeHtml(consentLabel)}</span>
-              </label>
-              <p class="call-me-modal__fineprint">${escapeHtml(callMeModalHint())}</p>
-              <p class="lead-form-status call-me-modal__status${outboundCallUi === "error" ? " is-error" : outboundCallUi === "answered" ? " is-success" : outboundCallUi === "calling" ? " is-pending" : ""}${outboundStatusMessage() ? " has-message" : ""}" id="callMeStatus" role="status" aria-live="polite">${escapeHtml(outboundStatusMessage())}</p>
-              <button type="submit" class="lead-submit call-me-modal__submit"${busy || !outboundConsentChecked ? " disabled" : ""}>
-                <span class="lead-submit__label">${escapeHtml(submitLabel)}</span>
-              </button>
-            </form>
-          </div>
-        </div>`;
+  return "";
 }
 
 function renderPrimaryCtaHtml(live: boolean, connecting: boolean): string {
@@ -1768,81 +1779,9 @@ function renderBrowserCallPromptHtml(live: boolean, connecting: boolean, hasErro
                         </p>`;
 }
 
-function renderNavPanelFootHtml(
-  live: boolean,
-  connecting: boolean,
-  voiceError = false,
-  voiceErrorDetail = "",
-): string {
-  const phone = demoPhoneInfo();
-  if (NAV_PANEL_VOICE_ENABLED) {
-    const eyebrowNav = voiceError
-      ? copy("rt_nav_panel_foot_eyebrow_error", "Could not connect")
-      : live
-      ? copy("rt_nav_panel_foot_eyebrow_live", "Voice live")
-      : connecting
-        ? copy("rt_nav_panel_foot_eyebrow_connecting", "Connecting")
-        : copy("rt_nav_panel_foot_tag", "Live voice demo");
-    const hintNav = voiceError
-      ? voiceConnectErrorMessage(voiceErrorDetail)
-      : live
-      ? copy(
-          "rt_nav_panel_foot_hint_live",
-          "You're connected. Speak when you're ready. Tap again to end the call.",
-        )
-      : connecting
-        ? copy(
-            "rt_nav_panel_foot_hint_connecting",
-            "Securing your voice session. Allow microphone when prompted.",
-          )
-        : copy(
-            "rt_nav_panel_foot",
-            "Hannah is an AI voice assistant. This session may be recorded and processed. Ask about pricing, integrations, or sign up now.",
-          );
-    const ariaLabelNav = voiceError
-      ? copy("rt_nav_panel_foot_voice_aria_retry", "Retry live voice demo")
-      : live
-      ? copy("rt_call_aria_end", "End call")
-      : connecting
-        ? copy("rt_call_aria_connecting", "Connecting")
-        : copy("rt_nav_panel_foot_voice_aria", "Start live voice demo in this panel");
-    return `<footer class="nav-panel__foot">
-              <button
-                type="button"
-                class="nav-panel__foot-card${live ? " is-voice-live" : ""}${connecting ? " is-voice-connecting" : ""}${voiceError ? " is-voice-error" : ""}"
-                id="navPanelFootVoiceBtn"
-                data-voice-scenario="hammer"${connecting ? " disabled" : ""}
-                aria-label="${escapeHtml(ariaLabelNav)}"
-              >
-                <span class="nav-panel__foot-signal${live ? " is-live" : ""}${connecting ? " is-connecting" : ""}" aria-hidden="true">
-                  <span class="nav-panel__foot-orbit${live ? " is-live" : ""}${connecting ? " is-connecting" : ""}"></span>
-                  ${iconNavFootMic}
-                </span>
-                <span class="nav-panel__foot-text">
-                  <span class="nav-panel__foot-eyebrow">${escapeHtml(eyebrowNav)}</span>
-                  <span class="nav-panel__foot-hint" aria-live="polite">${escapeHtml(hintNav)}</span>
-                </span>
-              </button>
-            </footer>`;
-  }
-  const eyebrow = copy("rt_nav_panel_foot_tag_phone", "Phone demo");
-  const hint = phone.display
-      ? copy(
-          "rt_nav_panel_foot_hint_phone",
-          "Call Hannah on your phone for the Sell Me a Pen challenge and Hammer signup.",
-        )
-      : copy(
-          "rt_nav_panel_foot_hint_phone_pending",
-          "A demo phone number will appear here once configured.",
-        );
-  return `<footer class="nav-panel__foot">
-              <div class="nav-panel__foot-card">
-                <span class="nav-panel__foot-text">
-                  <span class="nav-panel__foot-eyebrow">${escapeHtml(eyebrow)}</span>
-                  <span class="nav-panel__foot-hint">${escapeHtml(hint)}</span>
-                </span>
-              </div>
-            </footer>`;
+/** Live voice demo retired — the nav panel no longer has a demo foot card. */
+function renderNavPanelFootHtml(): string {
+  return "";
 }
 
 async function loadDemoPhoneFromHealth(): Promise<void> {
@@ -2404,6 +2343,7 @@ function mount() {
   }
 
   function scheduleVoiceIdlePrewarm(): void {
+    if (preferLightMobileNetwork()) return;
     if (!BROWSER_VOICE_ENABLED && !NAV_PANEL_VOICE_ENABLED) return;
     const warm = () => prewarmElevenLabsBackend("idle");
     const win = window as Window & {
@@ -2417,6 +2357,7 @@ function mount() {
   }
 
   function wireGlobalMicPrewarm(): void {
+    if (preferLightMobileNetwork()) return;
     if (!BROWSER_VOICE_ENABLED && !NAV_PANEL_VOICE_ENABLED) return;
     const warmOnce = (): void => {
       if (voiceMicPrewarmStarted) return;
@@ -2547,16 +2488,28 @@ function mount() {
           body: JSON.stringify({
             ...payload,
             channel: "website",
+            ...leadAttributionFields(),
             ...(leadModalSourceProduct ? { selected_plan: leadModalSourceProduct } : {}),
           }),
         });
         if (!res.ok) throw new Error(await readHttpErrorBody(res));
-        setLeadStatus(copy("rt_lead_success", "Thanks, we received your info."), "success");
-        leadModalOpen = false;
-        document.body.style.overflow = "";
+        // Report the lead to Google Ads and Meta. Never let tracking block the lead itself.
+        try {
+          const w = window as unknown as {
+            gtag?: (...args: unknown[]) => void;
+            fbq?: (...args: unknown[]) => void;
+          };
+          w.gtag?.("event", "conversion", { send_to: "AW-16574612743/Plo9CJ2woc8aEIeKst89" });
+          w.fbq?.("track", "Lead");
+        } catch {
+          /* ignore tracking errors */
+        }
+        setLeadStatus(
+          copy("rt_lead_success", "Thanks! We got your info. Our team will call you shortly."),
+          "success",
+        );
         form.reset();
         leadConsentChecked = false;
-        window.setTimeout(() => patchOverlayUi(), 600);
       } catch (err) {
         console.error("[lead form]", err);
         const msg =
@@ -2735,6 +2688,20 @@ function mount() {
         ?.classList.toggle("is-active", openNavPanel === panelId);
     }
 
+    // Heavy panel content is kept out of the initial HTML (page weight) and
+    // only rendered when its panel is open. When a panel is opened client-side
+    // (this patch path, not a full render), inject that content on first open.
+    if (openNavPanel === "reviews") {
+      const iframe = root.querySelector<HTMLIFrameElement>(".reviews-video__iframe");
+      if (iframe && !iframe.getAttribute("src")) iframe.src = REVIEWS_YOUTUBE_EMBED;
+    } else if (openNavPanel === "terms") {
+      const section = root.querySelector<HTMLElement>("#navPanelTerms");
+      if (section && !section.childElementCount) section.innerHTML = hammerTermsFragment;
+    } else if (openNavPanel === "privacy") {
+      const section = root.querySelector<HTMLElement>("#navPanelPrivacy");
+      if (section && !section.childElementCount) section.innerHTML = hammerPrivacyFragment;
+    }
+
     const navFoot = root.querySelector<HTMLElement>(".nav-panel__foot");
     if (navFoot) {
       navFoot.hidden = !openNavPanel || isLegalNavPanel(openNavPanel);
@@ -2911,6 +2878,13 @@ function mount() {
     }
   }
 
+  // True until the first render() call. The prerendered snapshot in the HTML
+  // was captured from this same template (scripts/prerender.mjs), so the first
+  // render can usually keep the existing DOM instead of wiping and rebuilding
+  // it — that wipe repainted the hero at script-boot time and pushed mobile
+  // LCP from ~2.8s (first paint) to ~6s.
+  let bootHydrationPending = true;
+
   function render() {
     const live = BROWSER_VOICE_ENABLED && uiState === "live";
     const connecting = BROWSER_VOICE_ENABLED && uiState === "connecting";
@@ -2922,7 +2896,7 @@ function mount() {
     const resolveLaneActive =
       BROWSER_VOICE_ENABLED &&
       (uiState === "connecting" || uiState === "live" || uiState === "error");
-    root.innerHTML = `
+    const shellHtml = `
       <div class="app-shell app-shell--landing">
         <div class="hero-scene" aria-hidden="true">
           <div class="hero-scene__sky"></div>
@@ -2961,6 +2935,7 @@ function mount() {
             ${renderChromeNavJumpButtons()}
           </nav>` : ""}
           <div class="chrome__actions">
+            ${renderChromeSignUpButton({ extraClass: "chrome__jump--signup", dataAction: "open-sign-up" })}
             ${renderChromeLoginLink()}
             ${renderChromeSalesPhone()}
           </div>
@@ -3005,7 +2980,7 @@ function mount() {
                   <div class="reviews-video__frame">
                     <iframe
                       class="reviews-video__iframe"
-                      src="https://www.youtube.com/embed/kcQufq_YC_Y?autoplay=1&amp;mute=1&amp;controls=0&amp;modestbranding=1&amp;playsinline=1&amp;rel=0&amp;iv_load_policy=3&amp;disablekb=1&amp;fs=0"
+                      ${openNavPanel === "reviews" ? `src="${REVIEWS_YOUTUBE_EMBED}"` : ""}
                       title="Customer testimonial"
                       frameborder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -3098,42 +3073,13 @@ function mount() {
                 </p>
               </div>
               <div id="navPanelTerms" class="nav-panel__section ${openNavPanel === "terms" ? "is-active" : ""}">
-                ${hammerTermsFragment}
+                ${openNavPanel === "terms" ? hammerTermsFragment : ""}
               </div>
               <div id="navPanelPrivacy" class="nav-panel__section ${openNavPanel === "privacy" ? "is-active" : ""}">
-                ${hammerPrivacyFragment}
-                <aside class="nav-panel__voice-privacy" aria-labelledby="voicePrivacyHeading">
-                  <h3 id="voicePrivacyHeading" class="nav-panel__voice-privacy-h">
-                    ${escapeHtml(copy("rt_voice_privacy_h", "Voice AI on this demo"))}
-                  </h3>
-                  <p>
-                    ${escapeHtml(
-                      copy(
-                        "rt_voice_privacy_p1",
-                        "When you use live voice on this page, your microphone audio is streamed in real time to ElevenLabs (speech-to-text and text-to-speech) and OpenAI (language model) so the assistant can understand you and respond. Your conversation may be processed and temporarily retained by those providers under their respective terms of service.",
-                      ),
-                    )}
-                  </p>
-                  <p>
-                    ${escapeHtml(
-                      copy(
-                        "rt_voice_privacy_p2",
-                        "Do not share payment card numbers, government IDs, passwords, health information, or any other sensitive personal data during this demo. This experience is for evaluation purposes only.",
-                      ),
-                    )}
-                  </p>
-                  <p>
-                    ${escapeHtml(
-                      copy(
-                        "rt_voice_privacy_p3",
-                        "This demo is separate from Hammer's production services. For data practices that apply when your dealership uses Hammer in production, refer to your Hammer service agreement and privacy policy.",
-                      ),
-                    )}
-                  </p>
-                </aside>
+                ${openNavPanel === "privacy" ? hammerPrivacyFragment : ""}
               </div>
             </div>
-            ${renderNavPanelFootHtml(navPanelVoiceLive, navPanelVoiceConnecting, navPanelVoiceError, errorDetail)}
+            ${renderNavPanelFootHtml()}
           </section>
         </div>
 
@@ -3161,6 +3107,7 @@ function mount() {
             </div>
             <div class="site-footer__reviews">
               ${renderFooterReviewsButton()}
+              <a href="/guides" class="chrome__jump" id="footerOpenGuides">${escapeHtml(copy("rt_site_footer_guides", "Guides"))}</a>
               <a href="/help" class="chrome__jump" id="footerOpenSupport">${escapeHtml(copy("rt_site_footer_support", "Contact Support"))}</a>
             </div>
           </nav>
@@ -3224,6 +3171,26 @@ function mount() {
         </div>
         ${renderCallMeModalHtml()}
       </div>`;
+
+    if (bootHydrationPending) {
+      bootHydrationPending = false;
+      // Parse the template detached so the browser normalizes it exactly like
+      // it normalized the injected snapshot; strip the snapshot's banner
+      // comment before comparing. On match, skip the innerHTML wipe and just
+      // (re)wire event handlers on the DOM that is already on screen. On any
+      // mismatch, fall back to the normal full render.
+      const stripComments = (h: string) => h.replace(/<!--[\s\S]*?-->/g, "").trim();
+      const probe = document.createElement("div");
+      probe.innerHTML = shellHtml;
+      if (stripComments(probe.innerHTML) === stripComments(root.innerHTML)) {
+        root.dataset.hydrated = "match";
+      } else {
+        root.dataset.hydrated = "replace";
+        root.innerHTML = shellHtml;
+      }
+    } else {
+      root.innerHTML = shellHtml;
+    }
 
     root.querySelectorAll<HTMLElement>("[data-panel]").forEach((btn) => {
       btn.addEventListener("click", (e) => {
@@ -3525,6 +3492,7 @@ function mount() {
   }
 
   window.addEventListener("keydown", onKeyDown);
+  postBootRender = render;
   render();
 }
 
@@ -3532,20 +3500,86 @@ void (async () => {
   // No token pre-warm here — WebRTC tokens are fetched on demand (user click only)
   // to avoid burning through ElevenLabs concurrent session limits before the user acts.
 
-  await Promise.all([loadSiteCopy(), loadDemoPhoneFromHealth()]);
-  statusText = BROWSER_VOICE_ENABLED
-    ? copy(
-        "rt_status_idle",
-        "Allow microphone access when prompted, then start the call.",
-      )
-    : telephonyOutbound.enabled
+  // The prerendered page is visible (and clickable) before the fetches below
+  // resolve, and a cold serverless start can take seconds. Capture early
+  // "Get Started" clicks so the lead modal opens on mount instead of the click
+  // silently doing nothing.
+  const earlyLeadClick = (ev: Event) => {
+    const el = ev.target as HTMLElement | null;
+    const btn = el?.closest?.('[data-action="open-sign-up"]');
+    if (!btn) return;
+    ev.preventDefault();
+    leadModalOpen = true;
+    leadModalSourceProduct = btn.getAttribute("data-product") ?? "";
+    syncLeadModalUrl(true);
+  };
+  document.addEventListener("click", earlyLeadClick, true);
+
+  const computeIdleStatusText = () => {
+    statusText = BROWSER_VOICE_ENABLED
       ? copy(
-          "rt_status_idle_call_me",
-          "Enter your number. Hannah will call you. You're the buyer. Push back.",
+          "rt_status_idle",
+          "Allow microphone access when prompted, then start the call.",
         )
-      : copy(
-          "rt_status_idle_phone",
-          "Call Hannah on your phone. You're the buyer. Push back.",
-        );
+      : telephonyOutbound.enabled
+        ? copy(
+            "rt_status_idle_call_me",
+            "Enter your number. Hannah will call you. You're the buyer. Push back.",
+          )
+        : copy(
+            "rt_status_idle_phone",
+            "Call Hannah on your phone. You're the buyer. Push back.",
+          );
+  };
+
+  // Honor "Get Started" clicks that happened before this bundle even loaded
+  // (recorded by the tiny inline script in index.html <head>).
+  const pendingLeadClick = (
+    window as unknown as { __pendingLeadClick?: { product?: string } }
+  ).__pendingLeadClick;
+  if (pendingLeadClick) {
+    leadModalOpen = true;
+    leadModalSourceProduct = pendingLeadClick.product ?? "";
+    syncLeadModalUrl(true);
+  }
+
+  // Mount immediately — don't gate interactivity on the fetches below (a cold
+  // serverless start can take seconds). The built-in strings match the
+  // published copy for the public pages, so the instant render is correct.
+  computeIdleStatusText();
   mount();
+  document.removeEventListener("click", earlyLeadClick, true);
+
+  // Snapshot render-relevant config so the post-fetch step can tell if the
+  // fetches changed anything the DOM shows. Compare *resolved* values, not raw
+  // state: /api/telephony/status often returns the same phone number that is
+  // already baked in via VITE_DEMO_PHONE_NUMBER, and rebuilding the DOM for a
+  // no-op change resets LCP several seconds late. (outbound_api_url is only
+  // used when placing a call — it never appears in the markup.)
+  const phoneConfigSnapshot = () => {
+    // telephonyOutbound is excluded: the retired call-me flow means the flag
+    // no longer affects anything the DOM shows.
+    const p = demoPhoneInfo();
+    return JSON.stringify([p.display, p.tel, p.href]);
+  };
+  const phoneConfigBefore = phoneConfigSnapshot();
+
+  // Apply late-arriving copy/config with one re-render, but never mid-interaction:
+  // a re-render rebuilds the DOM and would wipe form input or close-feel the modal.
+  await Promise.all([loadSiteCopy(), loadDemoPhoneFromHealth()]);
+  // Check staleness before computeIdleStatusText(), which itself calls copy()
+  // and would overwrite the recorded pre-fetch values.
+  const bootFetchesChangedUi =
+    renderedCopyIsStale() || phoneConfigSnapshot() !== phoneConfigBefore;
+  if (uiState === "idle") computeIdleStatusText();
+  const active = document.activeElement;
+  const userIsBusy =
+    leadModalOpen ||
+    callMeModalOpen ||
+    uiState !== "idle" ||
+    active instanceof HTMLInputElement ||
+    active instanceof HTMLTextAreaElement;
+  // Skip the rebuild when the fetched copy matches what is already rendered —
+  // rebuilding identical DOM pushed LCP out to the (cold) API round-trip.
+  if (!userIsBusy && bootFetchesChangedUi) postBootRender?.();
 })();

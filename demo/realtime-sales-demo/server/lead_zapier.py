@@ -58,6 +58,14 @@ class LeadCaptureRequest(BaseModel):
         default=False,
         description="Whether the contact affirmatively agreed to be contacted (TCPA/marketing consent at point of capture).",
     )
+    gclid: str | None = Field(None, max_length=200)
+    gbraid: str | None = Field(None, max_length=200)
+    wbraid: str | None = Field(None, max_length=200)
+    utm_source: str | None = Field(None, max_length=200)
+    utm_medium: str | None = Field(None, max_length=200)
+    utm_campaign: str | None = Field(None, max_length=200)
+    utm_term: str | None = Field(None, max_length=200)
+    utm_content: str | None = Field(None, max_length=200)
 
     @model_validator(mode="after")
     def validate_channel_fields(self) -> LeadCaptureRequest:
@@ -146,6 +154,18 @@ def lead_channel(body: LeadCaptureRequest) -> str:
     return "website"
 
 
+def _attr(body: LeadCaptureRequest, name: str) -> str:
+    return (getattr(body, name, None) or "").strip()
+
+
+def is_google_paid_search(body: LeadCaptureRequest) -> bool:
+    if _attr(body, "gclid") or _attr(body, "gbraid") or _attr(body, "wbraid"):
+        return True
+    source = _attr(body, "utm_source").lower()
+    medium = _attr(body, "utm_medium").lower()
+    return source == "google" and medium in {"cpc", "ppc", "paid", "paidsearch"}
+
+
 def resolve_dealership_name(body: LeadCaptureRequest) -> str:
     explicit = (body.dealership_name or "").strip()
     if explicit:
@@ -175,6 +195,17 @@ def build_zapier_payload(body: LeadCaptureRequest) -> dict[str, str]:
         notes += f" Seats: {body.seat_count.strip()}"
     if body.preferred_callback_time:
         notes += f" Walkthrough: {body.preferred_callback_time.strip()}"
+    google_paid = is_google_paid_search(body)
+    if google_paid:
+        notes += " Source: Google Ads"
+        campaign = _attr(body, "utm_campaign")
+        term = _attr(body, "utm_term")
+        if campaign:
+            notes += f" Campaign: {campaign}"
+        if term:
+            notes += f" Term: {term}"
+        if _attr(body, "gclid"):
+            notes += " gclid captured"
 
     event = "agreement_email_request" if channel == "voice" else "website_lead"
 
@@ -199,10 +230,33 @@ def build_zapier_payload(body: LeadCaptureRequest) -> dict[str, str]:
         "selectedPlan": (body.selected_plan or "").strip(),
         "lotSize": (body.lot_size or "").strip(),
         "seatCount": (body.seat_count or "").strip(),
-        "leadSource": "voice signup" if channel == "voice" else "website form",
+        "leadSource": (
+            "google ads" if google_paid else ("voice signup" if channel == "voice" else "website form")
+        ),
         "replyInstruction": "Reply to this email with: I approve",
         "contactConsent": "yes" if body.consent else "no",
     }
+    gclid = _attr(body, "gclid")
+    if gclid:
+        payload["gclid"] = gclid
+        payload["hsGoogleClickId"] = gclid
+    for src, dest in (
+        ("gbraid", "gbraid"),
+        ("wbraid", "wbraid"),
+        ("utm_source", "utmSource"),
+        ("utm_medium", "utmMedium"),
+        ("utm_campaign", "utmCampaign"),
+        ("utm_term", "utmTerm"),
+        ("utm_content", "utmContent"),
+    ):
+        value = _attr(body, src)
+        if value:
+            payload[dest] = value
+    if google_paid:
+        payload["hsAnalyticsSource"] = "PAID_SEARCH"
+        payload["hsAnalyticsSourceData1"] = "google"
+        payload["hsAnalyticsSourceData2"] = _attr(body, "utm_term") or _attr(body, "utm_campaign")
+
     if body.preferred_callback_time:
         payload["appointmentTime"] = body.preferred_callback_time.strip()
     if body.appointment_link:
